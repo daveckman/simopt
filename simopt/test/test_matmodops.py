@@ -15,7 +15,6 @@ b = [1, 2, 3]
 bneg = [-1, -2, -3]
 m = 3
 
-wackyvariable = 10
 class TestMatModOps(unittest.TestCase):
 
     def test_mat33_mat31_mult(self):
