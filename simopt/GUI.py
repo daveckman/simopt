@@ -17,7 +17,7 @@ import pickle
 from tkinter import Listbox
 import ast
 from PIL import ImageTk
-# Rina's Comments
+# Rina's 2nd comment
 
 
 class Experiment_Window(tk.Tk):
