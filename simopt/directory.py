@@ -52,22 +52,22 @@ problem_directory = {
     "PARAMESTI-1": ParamEstiMinLogLik
 }
 problem_nonabbreviated_directory = {
-    "CntNVMaxProfit": CntNVMaxProfit,
-    "MM1MinMeanSojournTime": MM1MinMeanSojournTime,
-    "FacilitySizingTotalCost": FacilitySizingTotalCost,
-    "FacilitySizingMaxService": FacilitySizingMaxService,
-    "RMITDMaxRevenue": RMITDMaxRevenue,
-    "SSContMinCost": SSContMinCost,
-    "IronOreMaxRev": IronOreMaxRev,
-    "DynamNewsMaxProfit": DynamNewsMaxProfit,
-    "DualSourcingMinCost": DualSourcingMinCost,
-    "ContaminationTotalCostDisc": ContaminationTotalCostDisc,
-    "ContaminationTotalCostCont": ContaminationTotalCostCont,
-    "ChessAvgDifference": ChessAvgDifference,
-    "SANLongestPath": SANLongestPath,
-    "HotelRevenue": HotelRevenue,
-    "TableAllocationMaxRev": TableAllocationMaxRev,
-    "ParamEstiMinLogLik": ParamEstiMinLogLik
+    "Max Profit for Continuous Newsvendor (SBCG)": CntNVMaxProfit,
+    "Min Mean Sojourn Time for MM1 Queue (SBCG)": MM1MinMeanSojournTime,
+    "Min Total Cost for Facility Sizing (SSCG)": FacilitySizingTotalCost,
+    "Max Service for Facility Sizing (SDCN)": FacilitySizingMaxService,
+    "Max Revenue for Revenue Management Temporal Demand (SDDN)": RMITDMaxRevenue,
+    "Min Total Cost for (s, S) Inventory (SBCN)": SSContMinCost,
+    "Max Revenue for Iron Ore (SBDN)": IronOreMaxRev,
+    "Max Profit for Dynamic Newsvendor (SBDG)": DynamNewsMaxProfit,
+    "Min Cost for Dual Sourcing (SBDN)": DualSourcingMinCost,
+    "Min Total Cost for Discrete Contamination (SSDN)": ContaminationTotalCostDisc,
+    "Min Total Cost for Continuous Contamination (SSCN)": ContaminationTotalCostCont,
+    "Min Avg Difference for Chess Matchmaking (SSCN)": ChessAvgDifference,
+    "Min Mean Longest Path for Stochastic Activity Network (SBCN)": SANLongestPath,
+    "Max Revenue for Hotel Booking (SBDN)": HotelRevenue,
+    "Max Revenue for Restaurant Table Allocation (SDDN)": TableAllocationMaxRev,
+    "Max Log Likelihood for Gamma Parameter Estimation (SBCG)": ParamEstiMinLogLik
 }
 model_directory = {
     "CNTNEWS": CntNV,
@@ -86,21 +86,21 @@ model_directory = {
     "PARAMESTI": ParameterEstimation
 }
 model_unabbreviated_directory = {
-    "CntNVMaxProfit": "CNTNEWS",
-    "MM1MinMeanSojournTime": "MM1",
-    "FacilitySizingTotalCost": "FACSIZE",
-    "FacilitySizingMaxService": "FACSIZE",
-    "RMITDMaxRevenue": "RMITD",
-    "SSContMinCost": "SSCONT",
-    "IronOreMaxRev": "IRONORE",
-    "DynamNewsMaxProfit": "DYNAMNEWS",
-    "DualSourcingMinCost": "DUALSOURCING",
-    "ContaminationTotalCostDisc": "CONTAM",
-    "ContaminationTotalCostCont": "CONTAM",
-    "ChessAvgDifference": "CHESS",
-    "SANLongestPath": "SAN",
-    "HotelRevenue": "HOTEL",
-    "TableAllocationMaxRev": "TABLEALLOCATION",
-    "ParamEstiMinLogLik": "PARAMESTI"
+    "Max Profit for Continuous Newsvendor (SBCG)": "CNTNEWS",
+    "Min Mean Sojourn Time for MM1 Queue (SBCG)": "MM1",
+    "Min Total Cost for Facility Sizing (SSCG)": "FACSIZE",
+    "Max Service for Facility Sizing (SDCN)": "FACSIZE",
+    "Max Revenue for Revenue Management Temporal Demand (SDDN)": "RMITD",
+    "Min Total Cost for (s, S) Inventory (SBCN)": "SSCONT",
+    "Max Revenue for Iron Ore (SBDN)": "IRONORE",
+    "Max Profit for Dynamic Newsvendor (SBDG)": "DYNAMNEWS",
+    "Min Cost for Dual Sourcing (SBDN)": "DUALSOURCING",
+    "Min Total Cost for Discrete Contamination (SSDN)": "CONTAM",
+    "Min Total Cost for Continuous Contamination (SSCN)": "CONTAM",
+    "Min Avg Difference for Chess Matchmaking (SSCN)": "CHESS",
+    "Min Mean Longest Path for Stochastic Activity Network (SSCN)": "SAN",
+    "Max Revenue for Hotel Booking (SBDN)": "HOTEL",
+    "Max Revenue for Restaurant Table Allocation (SDDN)": "TABLEALLOCATION",
+    "Max Log Likelihood for Gamma Parameter Estimation (SBCG)": "PARAMESTI"
 }
 

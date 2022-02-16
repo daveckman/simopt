@@ -1591,8 +1591,6 @@ class Cross_Design_Window():
                                                 variable = self.crossdesign_problem_checkbox_var)
             self.crossdesign_problem_checkbox.place(x=145, y=85+(25*problem_cnt))
 
-            ## Rina Added below 
-
             self.crossdesign_checkbox_problem_list.append(self.crossdesign_problem_checkbox_var)
             self.crossdesign_checkbox_problem_names.append(problem)
 
@@ -1658,8 +1656,8 @@ class Cross_Design_Window():
             self.crossdesign_button.place(x=15, y=135+(25*problem_cnt))
 
     def confirm_cross_design_function(self):
-        solver_names_list = ["ASTRODF","RNDSRCH","SANE"]
-        problem_names_list = ["CNTNEWS-1","MM1-1","FACSIZE-1","FACSIZE-2","RMITD-1","SSCONT-1"]
+        solver_names_list = ["ASTRODF","RNDSRCH","SANE"] #solver_directory.keys()
+        problem_names_list = ["CNTNEWS-1","MM1-1","FACSIZE-1","FACSIZE-2","RMITD-1","SSCONT-1"] #problem_directory.keys()y
         problem_list = []
         solver_list = []
 
