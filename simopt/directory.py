@@ -51,6 +51,24 @@ problem_directory = {
     "TABLEALLOCATION-1": TableAllocationMaxRev,
     "PARAMESTI-1": ParamEstiMinLogLik
 }
+problem_nonabbreviated_directory = {
+    "CntNVMaxProfit": CntNVMaxProfit,
+    "MM1MinMeanSojournTime": MM1MinMeanSojournTime,
+    "FacilitySizingTotalCost": FacilitySizingTotalCost,
+    "FacilitySizingMaxService": FacilitySizingMaxService,
+    "RMITDMaxRevenue": RMITDMaxRevenue,
+    "SSContMinCost": SSContMinCost,
+    "IronOreMaxRev": IronOreMaxRev,
+    "DynamNewsMaxProfit": DynamNewsMaxProfit,
+    "DualSourcingMinCost": DualSourcingMinCost,
+    "ContaminationTotalCostDisc": ContaminationTotalCostDisc,
+    "ContaminationTotalCostCont": ContaminationTotalCostCont,
+    "ChessAvgDifference": ChessAvgDifference,
+    "SANLongestPath": SANLongestPath,
+    "HotelRevenue": HotelRevenue,
+    "TableAllocationMaxRev": TableAllocationMaxRev,
+    "ParamEstiMinLogLik": ParamEstiMinLogLik
+}
 model_directory = {
     "CNTNEWS": CntNV,
     "MM1": MM1Queue,
@@ -67,3 +85,22 @@ model_directory = {
     "TABLEALLOCATION": TableAllocation,
     "PARAMESTI": ParameterEstimation
 }
+model_unabbreviated_directory = {
+    "CntNVMaxProfit": "CNTNEWS",
+    "MM1MinMeanSojournTime": "MM1",
+    "FacilitySizingTotalCost": "FACSIZE",
+    "FacilitySizingMaxService": "FACSIZE",
+    "RMITDMaxRevenue": "RMITD",
+    "SSContMinCost": "SSCONT",
+    "IronOreMaxRev": "IRONORE",
+    "DynamNewsMaxProfit": "DYNAMNEWS",
+    "DualSourcingMinCost": "DUALSOURCING",
+    "ContaminationTotalCostDisc": "CONTAM",
+    "ContaminationTotalCostCont": "CONTAM",
+    "ChessAvgDifference": "CHESS",
+    "SANLongestPath": "SAN",
+    "HotelRevenue": "HOTEL",
+    "TableAllocationMaxRev": "TABLEALLOCATION",
+    "ParamEstiMinLogLik": "PARAMESTI"
+}
+

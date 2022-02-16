@@ -9,15 +9,17 @@ import time
 from PIL import ImageTk, Image
 
 from directory import problem_directory
+from directory import problem_nonabbreviated_directory
 from directory import solver_directory
 from directory import model_directory
+from directory import model_unabbreviated_directory
+
 from wrapper_base import Experiment, MetaExperiment
 import wrapper_base
 import pickle
 from tkinter import Listbox
 import ast
 from PIL import ImageTk
-# Rina's 2nd comment
 
 
 class Experiment_Window(tk.Tk):
@@ -104,7 +106,7 @@ class Experiment_Window(tk.Tk):
             font = "Calibri 12")
 
         # from experiments.inputs.all_factors.py:
-        self.problem_list = problem_directory
+        self.problem_list = problem_nonabbreviated_directory
         # stays the same, has to change into a special type of variable via tkinter function
         self.problem_var = tk.StringVar(master=self.master)
         # sets the default OptionMenu value
@@ -323,7 +325,7 @@ class Experiment_Window(tk.Tk):
             label_problem = tk.Label(master=self.factor_tab_one_problem, text=heading, font="Calibri 14 bold")
             label_problem.grid(row=0, column=self.factor_heading_list_problem.index(heading), padx=10, pady=3)
 
-        self.problem_object = problem_directory[self.problem_var.get()]
+        self.problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
 
         count_factors_problem = 1
         for num, factor_type in enumerate(self.problem_object().specifications, start=0):
@@ -415,11 +417,17 @@ class Experiment_Window(tk.Tk):
         self.oracle_factors_list = []
         self.oracle_factors_types = []
 
-        problem = str(self.problem_var.get())
-        self.oracle = problem.split("-")
-        self.oracle = self.oracle[0]
-        self.oracle_object = model_directory[self.oracle]
 
+        ## Rina Adding After this 
+        problem = str(self.problem_var.get())  
+        self.oracle = model_unabbreviated_directory[problem] # returns model string
+        self.oracle_object = model_directory[self.oracle]
+        ##self.oracle = problem.split("-") 
+        ##self.oracle = self.oracle[0] 
+        ##self.oracle_object = model_directory[self.oracle] 
+        
+        ## Stop adding for Rina  
+    
         self.factor_label_frame_oracle = ttk.LabelFrame(master=self.master, text="Model Factors")
 
         self.factor_canvas_oracle = tk.Canvas(master=self.factor_label_frame_oracle, borderwidth=0)
@@ -528,7 +536,7 @@ class Experiment_Window(tk.Tk):
             self.add_button.place(x=10, rely=.48, width=200, height=30)
 
     def show_solver_factors(self, *args):
-
+        self.update_problem_list_compatability()
         self.solver_factors_list = []
         self.solver_factors_types = []
 
@@ -666,6 +674,29 @@ class Experiment_Window(tk.Tk):
         self.factor_label_frame_solver.place(x=10, rely=.15, relheight=.33, relwidth=.34)
         if str(self.problem_var.get()) != "Problem":
             self.add_button.place(x=10, rely=.48, width=200, height=30)
+    
+    #Creates a function that checks the compatibility of the solver picked with the list of problems and adds
+    #the compatible problems to a new list 
+    def update_problem_list_compatability(self):
+        temp_problem_list = []
+        for problem in problem_nonabbreviated_directory:
+            temp_problem = problem_nonabbreviated_directory[problem] # problem object
+            temp_problem_name = temp_problem().name
+            temp_experiment = Experiment(solver_name=self.solver_var.get(), problem_name=temp_problem_name)
+            comp = temp_experiment.check_compatibility()
+
+            if comp == "":
+                temp_problem_list.append(problem)
+
+        # from experiments.inputs.all_factors.py:
+        self.problem_list = temp_problem_list
+        # stays the same, has to change into a special type of variable via tkinter function
+        self.problem_var = tk.StringVar(master=self.master)
+        # sets the default OptionMenu value
+
+        # creates drop down menu, for tkinter, it is called "OptionMenu"
+        self.problem_menu = ttk.OptionMenu(self.master, self.problem_var, "Problem", *self.problem_list, command=self.show_problem_factors)
+        self.problem_menu.place(relx=.45, rely=.1)
 
     def clearRow_function(self, integer):
 
@@ -826,7 +857,7 @@ class Experiment_Window(tk.Tk):
         else:
             place = len(self.experiment_object_list)
 
-        if (self.problem_var.get() in problem_directory and self.solver_var.get() in solver_directory and self.macro_entry.get().isnumeric() != False):
+        if (self.problem_var.get() in problem_nonabbreviated_directory and self.solver_var.get() in solver_directory and self.macro_entry.get().isnumeric() != False):
             # creates blank list to store selections
             self.selected = []
             # grabs problem_var (whatever is selected our of OptionMenu)
@@ -873,6 +904,10 @@ class Experiment_Window(tk.Tk):
                 self.macro_reps = self.selected[2]
                 self.solver_name = self.selected[1]
                 self.problem_name = self.selected[0]
+                
+                problem_object = problem_nonabbreviated_directory[self.problem_name]
+                self.problem_name = problem_object().name
+                self.selected[0] = self.problem_name
 
                 self.my_experiment = Experiment(solver_name=self.solver_name, problem_name=self.problem_name, solver_rename=self.solver_rename, problem_rename=self.problem_rename, solver_fixed_factors=self.solver_factors, problem_fixed_factors=self.problem_factors, model_fixed_factors=self.oracle_factors)
                 self.my_experiment.n_macroreps = self.selected[2]
@@ -970,12 +1005,12 @@ class Experiment_Window(tk.Tk):
             return self.experiment_master_list
 
         # problem selected, but solver NOT selected
-        elif self.problem_var.get() in problem_directory and self.solver_var.get() not in solver_directory:
+        elif self.problem_var.get() in problem_nonabbreviated_directory and self.solver_var.get() not in solver_directory:
             message = "You have not selected a Solver!"
             tk.messagebox.showerror(title="Error Window", message=message)
 
         # problem NOT selected, but solver selected
-        elif self.problem_var.get() not in problem_directory and self.solver_var.get() in solver_directory:
+        elif self.problem_var.get() not in problem_nonabbreviated_directory and self.solver_var.get() in solver_directory:
             message = "You have not selected a Problem!"
             tk.messagebox.showerror(title="Error Window", message=message)
 
@@ -1522,43 +1557,48 @@ class Cross_Design_Window():
         self.crossdesign_problem_label = tk.Label(master=self.master,
                                                     text = "Select Problems:",
                                                     font = "Calibri 13")
-        self.crossdesign_problem_label.place(x=10, y=55)
+        self.crossdesign_problem_label.place(x=145, y=55)
 
         self.crossdesign_solver_label = tk.Label(master=self.master,
                                                     text = "Select Solvers:",
                                                     font = "Calibri 13")
-        self.crossdesign_solver_label.place(x=145, y=55)
+        self.crossdesign_solver_label.place(x=10, y=55)
 
         self.crossdesign_checkbox_problem_list = []
         self.crossdesign_checkbox_problem_names = []
         self.crossdesign_checkbox_solver_list = []
         self.crossdesign_checkbox_solver_names = []
 
+        solver_cnt = 0
+        
+        for solver in solver_directory:
+            self.crossdesign_solver_checkbox_var = tk.BooleanVar(self.master, value=False)
+            self.crossdesign_solver_checkbox = tk.Checkbutton(master=self.master,
+                                                            text = solver,
+                                                            variable = self.crossdesign_solver_checkbox_var)
+            self.crossdesign_solver_checkbox.place(x=10, y=85+(25*solver_cnt))
+
+            self.crossdesign_checkbox_solver_list.append(self.crossdesign_solver_checkbox_var)
+            self.crossdesign_checkbox_solver_names.append(solver)
+
+            solver_cnt += 1
+
         problem_cnt = 0
-        for problem in problem_directory:
+        for problem in problem_nonabbreviated_directory:
             self.crossdesign_problem_checkbox_var = tk.BooleanVar(self.master, value=False)
             self.crossdesign_problem_checkbox = tk.Checkbutton(master=self.master,
                                                 text = problem,
                                                 variable = self.crossdesign_problem_checkbox_var)
-            self.crossdesign_problem_checkbox.place(x=10, y=85+(25*problem_cnt))
+            self.crossdesign_problem_checkbox.place(x=145, y=85+(25*problem_cnt))
+
+            ## Rina Added below 
 
             self.crossdesign_checkbox_problem_list.append(self.crossdesign_problem_checkbox_var)
             self.crossdesign_checkbox_problem_names.append(problem)
 
             problem_cnt += 1
 
-        solver_cnt = 0
-        for solver in solver_directory:
-            self.crossdesign_solver_checkbox_var = tk.BooleanVar(self.master, value=False)
-            self.crossdesign_solver_checkbox = tk.Checkbutton(master=self.master,
-                                                            text = solver,
-                                                            variable = self.crossdesign_solver_checkbox_var)
-            self.crossdesign_solver_checkbox.place(x=145, y=85+(25*solver_cnt))
-
-            self.crossdesign_checkbox_solver_list.append(self.crossdesign_solver_checkbox_var)
-            self.crossdesign_checkbox_solver_names.append(solver)
-
-            solver_cnt += 1
+        
 
         if problem_cnt < solver_cnt:
             solver_cnt += 1
@@ -1623,17 +1663,19 @@ class Cross_Design_Window():
         problem_list = []
         solver_list = []
 
+        for checkbox in self.crossdesign_checkbox_solver_list:
+            if checkbox.get() == True:
+                #(self.crossdesign_checkbox_solver_names[self.crossdesign_checkbox_solver_list.index(checkbox)] + " was selected (solver)")
+                #solver_list.append(solver_directory[self.crossdesign_checkbox_solver_names[self.crossdesign_checkbox_solver_list.index(checkbox)]])
+                solver_list.append(solver_names_list[self.crossdesign_checkbox_solver_list.index(checkbox)])
+                
         for checkbox in self.crossdesign_checkbox_problem_list:
             if checkbox.get() == True:
                 #(self.crossdesign_checkbox_problem_names[self.crossdesign_checkbox_problem_list.index(checkbox)] + " was selected (problem)")
                 #problem_list.append(problem_directory[self.crossdesign_checkbox_problem_names[self.crossdesign_checkbox_problem_list.index(checkbox)]])
                 problem_list.append(problem_names_list[self.crossdesign_checkbox_problem_list.index(checkbox)])
 
-        for checkbox in self.crossdesign_checkbox_solver_list:
-            if checkbox.get() == True:
-                #(self.crossdesign_checkbox_solver_names[self.crossdesign_checkbox_solver_list.index(checkbox)] + " was selected (solver)")
-                #solver_list.append(solver_directory[self.crossdesign_checkbox_solver_names[self.crossdesign_checkbox_solver_list.index(checkbox)]])
-                solver_list.append(solver_names_list[self.crossdesign_checkbox_solver_list.index(checkbox)])
+        
 
         # Solver can handle upto deterministic constraints, but problem has stochastic constraints.
         stochastic = ["FACSIZE-1","FACSIZE-2","RMITD-1"]
@@ -2167,7 +2209,7 @@ class Plot_Window():
                             font = "Calibri 13")
 
             # from experiments.inputs.all_factors.py:
-            self.problem_list = problem_directory
+            self.problem_list = problem_nonabbreviated_directory
             # stays the same, has to change into a special type of variable via tkinter function
             self.problem_var = tk.StringVar(master=self.master)
 
@@ -2629,8 +2671,6 @@ class Plot_Window():
             if c == 4:
                 c = 0
                 ro += 1
-
-
 def main():
     root = tk.Tk()
     root.title("SimOpt Library Graphical User Interface")
@@ -2642,3 +2682,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
