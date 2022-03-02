@@ -33,6 +33,10 @@ solver_directory = {
     "ASTRODF": ASTRODF,
     "RNDSRCH": RandomSearch
 }
+solver_nonabbreviated_directory = {
+    "ASTRODF (SDCN)": ASTRODF,
+    "RNDSRCH (SSMN)": RandomSearch
+}
 problem_directory = {
     "CNTNEWS-1": CntNVMaxProfit,
     "MM1-1": MM1MinMeanSojournTime,

@@ -13,6 +13,7 @@ from directory import problem_nonabbreviated_directory
 from directory import solver_directory
 from directory import model_directory
 from directory import model_unabbreviated_directory
+from directory import solver_nonabbreviated_directory
 
 from wrapper_base import Experiment, MetaExperiment
 import wrapper_base
@@ -119,7 +120,7 @@ class Experiment_Window(tk.Tk):
                         font = "Calibri 13")
 
         # from experiments.inputs.all_factors.py:
-        self.solver_list = solver_directory
+        self.solver_list = solver_nonabbreviated_directory
         # stays the same, has to change into a special type of variable via tkinter function
         self.solver_var = tk.StringVar(master=self.master)
         # sets the default OptionMenu value
@@ -154,6 +155,11 @@ class Experiment_Window(tk.Tk):
                                                 text = "Load File",
                                                 width = 15,
                                                 command = self.load_pickle_file_function)
+
+        self.attribute_description_label = tk.Label(master=self.master,
+                                                    text = "Attribute Decription Label for problems: Objective(single [S] or multiple [M])    Constraint(Unconstrained [U], Box[B], Determinisitic [D], Stochastic [S]\n Variable(Discrete [D], Continuous [C], Mixed [M])    Gradient (True [T] or False [F])" ,
+                                                    font = "Calibri 9")
+        self.attribute_description_label.place(x= 250, rely = 0.48)
 
 
         self.post_normal_all_button = ttk.Button(master=self.master,
@@ -576,7 +582,7 @@ class Experiment_Window(tk.Tk):
             label = tk.Label(master=self.factor_tab_one_solver, text=heading, font="Calibri 14 bold")
             label.grid(row=0, column=self.factor_heading_list_solver.index(heading), padx=10, pady=3)
 
-        self.solver_object = solver_directory[self.solver_var.get()]
+        self.solver_object = solver_nonabbreviated_directory[self.solver_var.get()]
 
         count_factors_solver = 1
         for factor_type in self.solver_object().specifications:
@@ -679,10 +685,16 @@ class Experiment_Window(tk.Tk):
     #the compatible problems to a new list 
     def update_problem_list_compatability(self):
         temp_problem_list = []
+        
         for problem in problem_nonabbreviated_directory:
+
             temp_problem = problem_nonabbreviated_directory[problem] # problem object
             temp_problem_name = temp_problem().name
-            temp_experiment = Experiment(solver_name=self.solver_var.get(), problem_name=temp_problem_name)
+            
+            temp_solver = solver_nonabbreviated_directory[self.solver_var.get()]
+            temp_solver_name = temp_solver().name
+
+            temp_experiment = Experiment(solver_name=temp_solver_name, problem_name=temp_problem_name)
             comp = temp_experiment.check_compatibility()
 
             if comp == "":
@@ -857,7 +869,7 @@ class Experiment_Window(tk.Tk):
         else:
             place = len(self.experiment_object_list)
 
-        if (self.problem_var.get() in problem_nonabbreviated_directory and self.solver_var.get() in solver_directory and self.macro_entry.get().isnumeric() != False):
+        if (self.problem_var.get() in problem_nonabbreviated_directory and self.solver_var.get() in solver_nonabbreviated_directory and self.macro_entry.get().isnumeric() != False):
             # creates blank list to store selections
             self.selected = []
             # grabs problem_var (whatever is selected our of OptionMenu)
@@ -905,8 +917,12 @@ class Experiment_Window(tk.Tk):
                 self.solver_name = self.selected[1]
                 self.problem_name = self.selected[0]
                 
+                solver_object = solver_nonabbreviated_directory[self.solver_name]
+                self.solver_name = solver_object().name
+
                 problem_object = problem_nonabbreviated_directory[self.problem_name]
                 self.problem_name = problem_object().name
+
                 self.selected[0] = self.problem_name
 
                 self.my_experiment = Experiment(solver_name=self.solver_name, problem_name=self.problem_name, solver_rename=self.solver_rename, problem_rename=self.problem_rename, solver_fixed_factors=self.solver_factors, problem_fixed_factors=self.problem_factors, model_fixed_factors=self.oracle_factors)
@@ -1005,12 +1021,12 @@ class Experiment_Window(tk.Tk):
             return self.experiment_master_list
 
         # problem selected, but solver NOT selected
-        elif self.problem_var.get() in problem_nonabbreviated_directory and self.solver_var.get() not in solver_directory:
+        elif self.problem_var.get() in problem_nonabbreviated_directory and self.solver_var.get() not in solver_nonabbreviated_directory:
             message = "You have not selected a Solver!"
             tk.messagebox.showerror(title="Error Window", message=message)
 
         # problem NOT selected, but solver selected
-        elif self.problem_var.get() not in problem_nonabbreviated_directory and self.solver_var.get() in solver_directory:
+        elif self.problem_var.get() not in problem_nonabbreviated_directory and self.solver_var.get() in solver_nonabbreviated_directory:
             message = "You have not selected a Problem!"
             tk.messagebox.showerror(title="Error Window", message=message)
 
@@ -1372,7 +1388,7 @@ class Experiment_Window(tk.Tk):
         self.crossdesign_window.title("Cross-Design Experiments")
         self.cross_app = Cross_Design_Window(self.crossdesign_window, self)
 
-    def add_meta_exp_to_frame(self):
+    def add_meta_exp_to_frame(self,n_macroreps):
         row_num = self.count_meta_experiment_queue + 1
         self.problem_added = tk.Label(master=self.tab_two,
                                                     text=self.cross_app.crossdesign_MetaExperiment.problem_names,
@@ -1387,7 +1403,7 @@ class Experiment_Window(tk.Tk):
         self.solver_added.grid(row=row_num, column=1, sticky='nsew', padx=10, pady=3)
 
         self.macros_added = tk.Label(master=self.tab_two,
-                                        text="10",
+                                        text= str(n_macroreps),
                                         font = "Calibri 12",
                                         justify="center")
         self.macros_added.grid(row=row_num, column=2, sticky='nsew', padx=10, pady=3)
@@ -1571,7 +1587,7 @@ class Cross_Design_Window():
 
         solver_cnt = 0
         
-        for solver in solver_directory:
+        for solver in solver_nonabbreviated_directory:
             self.crossdesign_solver_checkbox_var = tk.BooleanVar(self.master, value=False)
             self.crossdesign_solver_checkbox = tk.Checkbutton(master=self.master,
                                                             text = solver,
@@ -1700,7 +1716,7 @@ class Cross_Design_Window():
         # if self.count_meta_experiment_queue == 0:
         #     self.create_meta_exp_frame()
         self.master.destroy()
-        Experiment_Window.add_meta_exp_to_frame( self.main_window)
+        Experiment_Window.add_meta_exp_to_frame(self.main_window, self.crossdesign_macro_var)
 
         return self.crossdesign_MetaExperiment
 
@@ -2220,7 +2236,7 @@ class Plot_Window():
                             font = "Calibri 13")
 
             # from experiments.inputs.all_factors.py:
-            self.solver_list = solver_directory
+            self.solver_list = solver_nonabbreviated_directory
             # stays the same, has to change into a special type of variable via tkinter function
             self.solver_var = tk.StringVar(master=self.master)
 
