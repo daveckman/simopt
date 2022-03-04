@@ -331,6 +331,7 @@ class Experiment_Window(tk.Tk):
             label_problem = tk.Label(master=self.factor_tab_one_problem, text=heading, font="Calibri 14 bold")
             label_problem.grid(row=0, column=self.factor_heading_list_problem.index(heading), padx=10, pady=3)
 
+        
         self.problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
 
         count_factors_problem = 1
@@ -542,6 +543,7 @@ class Experiment_Window(tk.Tk):
             self.add_button.place(x=10, rely=.48, width=200, height=30)
 
     def show_solver_factors(self, *args):
+        
         self.update_problem_list_compatability()
         self.solver_factors_list = []
         self.solver_factors_types = []
@@ -684,31 +686,34 @@ class Experiment_Window(tk.Tk):
     #Creates a function that checks the compatibility of the solver picked with the list of problems and adds
     #the compatible problems to a new list 
     def update_problem_list_compatability(self):
-        temp_problem_list = []
-        
-        for problem in problem_nonabbreviated_directory:
 
-            temp_problem = problem_nonabbreviated_directory[problem] # problem object
-            temp_problem_name = temp_problem().name
+        if self.solver_var.get() != "Solver":
+            self.problem_menu.destroy()
+            temp_problem_list = []
             
-            temp_solver = solver_nonabbreviated_directory[self.solver_var.get()]
-            temp_solver_name = temp_solver().name
+            for problem in problem_nonabbreviated_directory:
 
-            temp_experiment = Experiment(solver_name=temp_solver_name, problem_name=temp_problem_name)
-            comp = temp_experiment.check_compatibility()
+                temp_problem = problem_nonabbreviated_directory[problem] # problem object
+                temp_problem_name = temp_problem().name
+                
+                temp_solver = solver_nonabbreviated_directory[self.solver_var.get()]
+                temp_solver_name = temp_solver().name
 
-            if comp == "":
-                temp_problem_list.append(problem)
+                temp_experiment = Experiment(solver_name=temp_solver_name, problem_name=temp_problem_name)
+                comp = temp_experiment.check_compatibility()
 
-        # from experiments.inputs.all_factors.py:
-        self.problem_list = temp_problem_list
-        # stays the same, has to change into a special type of variable via tkinter function
-        self.problem_var = tk.StringVar(master=self.master)
-        # sets the default OptionMenu value
+                if comp == "":
+                    temp_problem_list.append(problem)
 
-        # creates drop down menu, for tkinter, it is called "OptionMenu"
-        self.problem_menu = ttk.OptionMenu(self.master, self.problem_var, "Problem", *self.problem_list, command=self.show_problem_factors)
-        self.problem_menu.place(relx=.45, rely=.1)
+            # from experiments.inputs.all_factors.py:
+            self.problem_list = temp_problem_list
+            # stays the same, has to change into a special type of variable via tkinter function
+            self.problem_var = tk.StringVar(master=self.master)
+            # sets the default OptionMenu value
+
+            # creates drop down menu, for tkinter, it is called "OptionMenu"
+            self.problem_menu = ttk.OptionMenu(self.master, self.problem_var, "Problem", *self.problem_list, command=self.show_problem_factors)
+            self.problem_menu.place(relx=.45, rely=.1)
 
     def clearRow_function(self, integer):
 
@@ -917,11 +922,9 @@ class Experiment_Window(tk.Tk):
                 self.solver_name = self.selected[1]
                 self.problem_name = self.selected[0]
                 
-                solver_object = solver_nonabbreviated_directory[self.solver_name]
-                self.solver_name = solver_object().name
-
-                problem_object = problem_nonabbreviated_directory[self.problem_name]
-                self.problem_name = problem_object().name
+                solver_object,self.solver_name = problem_solver_nonabbreviated_to_object(self.solver_name,solver_nonabbreviated_directory)
+                problem_object, self.problem_name = problem_solver_nonabbreviated_to_object(self.problem_name,problem_nonabbreviated_directory)
+                
 
                 self.selected[0] = self.problem_name
 
@@ -1466,7 +1469,7 @@ class Experiment_Window(tk.Tk):
 
         self.my_experiment = self.meta_experiment_master_list[row_index]
         # self.macro_reps = self.selected[2]
-        self.macro_reps = 10
+        self.macro_reps = 2
 
         #(self.my_experiment.n_solvers)
         #(self.my_experiment.n_problems)
@@ -2685,6 +2688,14 @@ class Plot_Window():
             if c == 4:
                 c = 0
                 ro += 1
+def problem_solver_nonabbreviated_to_object(problem_or_solver,nonabbreviated_dictionary):
+    if problem_or_solver in nonabbreviated_dictionary.keys():
+        problem_or_solver_object = nonabbreviated_dictionary[problem_or_solver]
+        return problem_or_solver_object, problem_or_solver_object().name
+
+    else:
+        print(f"{problem_or_solver} not found in {nonabbreviated_dictionary}")
+
 def main():
     root = tk.Tk()
     root.title("SimOpt Library Graphical User Interface")

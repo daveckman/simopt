@@ -35,7 +35,7 @@ solver_directory = {
 }
 solver_nonabbreviated_directory = {
     "ASTRODF (SDCN)": ASTRODF,
-    "RNDSRCH (SSMN)": RandomSearch
+    "RandomSearch (SSMN)": RandomSearch
 }
 problem_directory = {
     "CNTNEWS-1": CntNVMaxProfit,
