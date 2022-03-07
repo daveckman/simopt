@@ -400,7 +400,8 @@ class Experiment_Window(tk.Tk):
         if args and len(args) == 2 and args[0] == True:
             oldname = args[1][3][1]
         else:
-            oldname = self.problem_var.get()
+            problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
+            oldname = problem_object().name
 
         self.save_label_problem = tk.Label(master=self.factor_tab_one_problem,
                                             text = "Save Problem As",
@@ -667,7 +668,9 @@ class Experiment_Window(tk.Tk):
         if args and len(args) == 2 and args[0] == True:
             oldname = args[1][5][1]
         else:
-            oldname = self.solver_var.get()
+            solver_object = solver_nonabbreviated_directory[self.solver_var.get()]
+            oldname = solver_object().name
+
         self.save_var_solver = tk.StringVar(self.factor_tab_one_solver)
         self.save_entry_solver = ttk.Entry(master=self.factor_tab_one_solver, textvariable = self.save_var_solver, justify = tk.LEFT, width=15)
         self.save_entry_solver.insert(index=tk.END, string=oldname)
@@ -2188,6 +2191,10 @@ class Plot_Window():
 
             self.all_problems = []
             i = 0
+
+            # Rina Added to this
+            
+
             for problem in self.experiment_list:
                 if problem.problem.name not in self.all_problems:
                     self.all_problems.append(problem.problem.name)
@@ -2382,6 +2389,7 @@ class Plot_Window():
                 for exp in self.experiment_list:
                     if exp.problem.name == self.problem_menu.get(i):
                         probs.append(exp)
+
             if len(probs) == 0 or len(self.solvers) == 0 or str(self.plot_var.get()) == "Plot":
                 txt = "At least 1 Problem, 1 Solver, and 1 Plot Type must be selected."
                 self.bad_label = tk.Label(master=self.master,text=txt,font = "Calibri 12",justify="center")
