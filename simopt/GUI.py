@@ -86,6 +86,7 @@ class Experiment_Window(tk.Tk):
         self.widget_norm_list = []
         self.post_norm_exp_list = []
         self.prev = 60
+        self.meta_experiment_macro_reps = []
 
         self.instruction_label = tk.Label(master=self.master, # window label is used in
                             text = "Welcome to SimOpt \n Please Load or Add Your Experiment(s): ",
@@ -128,10 +129,19 @@ class Experiment_Window(tk.Tk):
         # creates drop down menu, for tkinter, it is called "OptionMenu"
         self.solver_menu = ttk.OptionMenu(self.master, self.solver_var, "Solver", *self.solver_list, command=self.show_solver_factors)
 
-        self.macro_label = tk.Label(master=self.master,
-                        text = "Number of Macroreplications:",
+        #self.macro_label = tk.Label(master=self.master,
+        #                text = "Number of Macroreplications:",
+          #              font = "Calibri 13")
+
+        self.macro_definition = tk.Label(master=self.master,
+                        text = "",
                         font = "Calibri 13")
 
+        self.macro_definition_label = tk.Label(master=self.master,
+                                                  text = "Number of Macroreplications:",
+                                                  font = "Calibri 13",
+                                                  width = 25)
+        
         self.macro_var = tk.StringVar(self.master)
         self.macro_entry = ttk.Entry(master=self.master, textvariable = self.macro_var, justify = tk.LEFT)
         self.macro_entry.insert(index=tk.END, string="10")
@@ -255,8 +265,13 @@ class Experiment_Window(tk.Tk):
         self.problem_label.place(relx=.35, rely=.1)
         self.problem_menu.place(relx=.45, rely=.1)
 
-        self.macro_label.place(relx=.7, rely=.1)
-        self.macro_entry.place(relx=.87, rely=.1, width=100)
+        #self.macro_label.place(relx=.7, rely=.1)
+        self.macro_entry.place(relx=.89, rely=.1, width=100)
+
+        self.macro_definition.place(relx=.73, rely=.05)
+        self.macro_definition_label.place(relx=.7, rely=.1)
+        self.macro_definition_label.bind("<Enter>",self.on_enter)
+        self.macro_definition_label.bind("<Leave>",self.on_leave)
 
         self.or_label.place(x=185, rely=.06)
         self.crossdesign_button.place(x=215, rely=.06, width=200)
@@ -280,12 +295,16 @@ class Experiment_Window(tk.Tk):
 
         # self.l1.bind("<Enter>", self.on_enter)
         # self.l1.bind("<Leave>", self.on_leave)
+    #def on_enter(self, event):
+        # self.l2(text="Hover Works :)")
+    #def on_leave(self, enter):
+        #self.l2.configure(text="")
 
     def on_enter(self, event):
-        self.l2.configure(text="HOVER WORKS (:")
+        self.macro_definition.configure(text="Definition of MacroReplication")
 
     def on_leave(self, enter):
-        self.l2.configure(text="")
+        self.macro_definition.configure(text="")
 
     def show_problem_factors(self, *args):
         # if args and len(args) == 2:
@@ -1395,6 +1414,9 @@ class Experiment_Window(tk.Tk):
         self.cross_app = Cross_Design_Window(self.crossdesign_window, self)
 
     def add_meta_exp_to_frame(self,n_macroreps):
+
+        self.meta_experiment_macro_reps.append(int(n_macroreps.get()))
+
         row_num = self.count_meta_experiment_queue + 1
         self.problem_added = tk.Label(master=self.tab_two,
                                                     text=self.cross_app.crossdesign_MetaExperiment.problem_names,
@@ -1409,7 +1431,7 @@ class Experiment_Window(tk.Tk):
         self.solver_added.grid(row=row_num, column=1, sticky='nsew', padx=10, pady=3)
 
         self.macros_added = tk.Label(master=self.tab_two,
-                                        text= str(n_macroreps),
+                                        text= n_macroreps.get(),
                                         font = "Calibri 12",
                                         justify="center")
         self.macros_added.grid(row=row_num, column=2, sticky='nsew', padx=10, pady=3)
@@ -1464,15 +1486,17 @@ class Experiment_Window(tk.Tk):
         # Plot_Window(self.postrep_window, self.my_experiment.experiments[0], self, True, self.meta_experiment_master_list[row_index])
         Plot_Window(self.postrep_window, exps, self)
 
-    def run_meta_function(self, integer):
+    def run_meta_function(self, integer):      
+
+
         row_index = integer - 1
         self.widget_meta_list[row_index][5]["state"] = "normal"
         self.widget_meta_list[row_index][3]["state"] = "disabled"
 
 
         self.my_experiment = self.meta_experiment_master_list[row_index]
-        # self.macro_reps = self.selected[2]
-        self.macro_reps = 2
+        #self.macro_reps = self.selected[2]
+        self.macro_reps =  self.meta_experiment_macro_reps[row_index]
 
         #(self.my_experiment.n_solvers)
         #(self.my_experiment.n_problems)
@@ -2192,9 +2216,6 @@ class Plot_Window():
             self.all_problems = []
             i = 0
 
-            # Rina Added to this
-            
-
             for problem in self.experiment_list:
                 if problem.problem.name not in self.all_problems:
                     self.all_problems.append(problem.problem.name)
@@ -2407,6 +2428,7 @@ class Plot_Window():
             i = len(self.plot_type_list)-1
             exp = self.plot_exp_list[len(self.plot_exp_list)-1]
             exp2 = [[e] for e in exp]
+            
             #keep as list of list for multiple solvers if using exp2
             #one problem, multiple solvers
 
