@@ -2216,6 +2216,7 @@ class Plot_Window():
             self.all_problems = []
             i = 0
 
+            # Creating a list of problems from the experiment list
             for problem in self.experiment_list:
                 if problem.problem.name not in self.all_problems:
                     self.all_problems.append(problem.problem.name)
@@ -2227,12 +2228,14 @@ class Plot_Window():
             #("solvers:",self.all_solvers)
             if meta:
                 i = 0
+            # Getting the names for the solvers from the metalist and add it to the solver menu 
                 for name in self.metaList.solver_names:
                     self.solver_menu.insert(i,name)
                     i += 1
             else:
                 self.all_solvers = []
                 i = 0
+             # Getting the solvers from the experiment list and add it to the solver menu 
                 for solvers in self.experiment_list:
                     if solvers.solver.name not in self.all_solvers:
                         self.all_solvers.append(solvers.solver.name)

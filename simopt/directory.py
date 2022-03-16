@@ -102,7 +102,7 @@ model_unabbreviated_directory = {
     "Min Total Cost for Discrete Contamination (SSDN)": "CONTAM",
     "Min Total Cost for Continuous Contamination (SSCN)": "CONTAM",
     "Min Avg Difference for Chess Matchmaking (SSCN)": "CHESS",
-    "Min Mean Longest Path for Stochastic Activity Network (SSCN)": "SAN",
+    "Min Mean Longest Path for Stochastic Activity Network (SBCN)": "SAN",
     "Max Revenue for Hotel Booking (SBDN)": "HOTEL",
     "Max Revenue for Restaurant Table Allocation (SDDN)": "TABLEALLOCATION",
     "Max Log Likelihood for Gamma Parameter Estimation (SBCG)": "PARAMESTI"
