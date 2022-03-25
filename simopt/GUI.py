@@ -2369,6 +2369,7 @@ class Plot_Window():
             tf_list = ['True','False']
             self.settings_label_frame.place(relx=.65, rely=.15, relheight=.2, relwidth=.3)
 
+            # Confidence Interval Checkbox
             entry1 = tk.Checkbutton(self.settings_canvas, variable=self.params[0], onvalue="True", offvalue="False")
             entry1.select()
             # entry1 = ttk.OptionMenu(self.settings_canvas, self.params[0], "True", *tf_list)
@@ -2376,8 +2377,10 @@ class Plot_Window():
             label1.grid(row=0, column=0, padx=10, pady=3)
             entry1.grid(row=0, column=1, padx=10, pady=3)
 
+            # Plot Together Checkbox
             entry = tk.Checkbutton(self.settings_canvas, variable=self.params[1], onvalue="True", offvalue="False")
             entry.select()
+            # Creates the Check Mark that checks whether the plots will be plot together
             label = tk.Label(master=self.settings_canvas, text="Plot Together", font="Calibri 14")
             label.grid(row=1, column=0, padx=10, pady=3)
             entry.grid(row=1, column=1, padx=10, pady=3)
@@ -2396,8 +2399,6 @@ class Plot_Window():
                 print(self.solver_menu.get(i))
 
         def add_plot(self):
-
-
             solverList = ""
             self.solvers = []
             for i in self.solver_menu.curselection():
@@ -2438,9 +2439,9 @@ class Plot_Window():
             param_value_list = []
             for t in self.params:
                 #(t.get())
-                if t.get() == "True":
+                if t.get() == True:
                     param_value_list.append(True)
-                elif t.get() == "False":
+                elif t.get() == False:
                     param_value_list.append(False)
                 elif t.get() != "":
                     try:
@@ -2449,32 +2450,33 @@ class Plot_Window():
                         param_value_list.append(t.get())
 
             ci = param_value_list[0]
+            plot_together = param_value_list[1]
             hw = param_value_list[2]
-
+            
             if self.plot_type_list[i] == "Mean Progress Curve":
-                path_name = wrapper_base.plot_progress_curves(exp,"mean", plot_CIs=ci, all_in_one=param_value_list[1], print_max_hw=hw, normalize=param_value_list[3])
+                path_name = wrapper_base.plot_progress_curves(exp,plot_type="mean", beta = 0.5, normalize=param_value_list[3], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[3]}
             elif self.plot_type_list[i] == "Quatile Progress Curve":
-                path_name = wrapper_base.plot_progress_curves(exp,"quantile", plot_CIs=ci, all_in_one=param_value_list[1], print_max_hw=hw, beta=param_value_list[3],normalize=param_value_list[4])
+                path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3],normalize=param_value_list[4], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[4], "beta":param_value_list[3]}
             elif self.plot_type_list[i] == "Solve time CDF":
-                path_name = wrapper_base.plot_solvability_cdfs(exp, plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3])
+                path_name = wrapper_base.plot_solvability_cdfs(exp,solve_tol=param_value_list[3], all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3]}
             elif self.plot_type_list[i] == "Scatter Plot":
-                path_name = wrapper_base.plot_area_scatterplots(exp2, plot_CIs=ci, print_max_hw=hw)
+                path_name = wrapper_base.plot_area_scatterplots(exp2,all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {}
             elif self.plot_type_list[i] == "CDF Solvability":
-                path_name = wrapper_base.plot_solvability_profiles(exp2, "cdf_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],ref_solver=None)
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "cdf_solvability", all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],ref_solver=None)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3]}
             elif self.plot_type_list[i] == "Quantile Solvability":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"beta":param_value_list[4]}
-                path_name = wrapper_base.plot_solvability_profiles(exp2, "quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=None)
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "quantile_solvability",all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=None)
             elif self.plot_type_list[i] == "CDF Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[4]}
-                path_name = wrapper_base.plot_solvability_profiles(exp2, "diff_cdf_solvability", plot_CIs=ci,print_max_hw=hw,solve_tol=param_value_list[3],ref_solver=param_value_list[4])
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_cdf_solvability", all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw,solve_tol=param_value_list[3], beta=param_value_list[4], ref_solver=param_value_list[4])
             elif self.plot_type_list[i] == "Quanitle Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[5],"beta":param_value_list[4]}
-                path_name = wrapper_base.plot_solvability_profiles(exp2, "diff_quantile_solvability", plot_CIs=ci,print_max_hw=hw,solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=param_value_list[5])
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", all_in_one = plot_together, plot_CIs=ci,print_max_hw=hw, solve_tol=param_value_list[3], beta=param_value_list[4],ref_solver=param_value_list[5])
             else:
                 print(self.plot_type_list[i])
             for i,new_plot in enumerate(path_name):
