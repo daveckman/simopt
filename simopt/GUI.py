@@ -1367,9 +1367,15 @@ class Experiment_Window(tk.Tk):
 
     def post_rep_function(self, integer):
         row_index = integer - 1
+        self.my_experiment = self.experiment_object_list[row_index]
         self.selected = self.experiment_object_list[row_index]
         self.post_rep_function_row_index = integer
         # calls postprocessing window
+
+        print("This is the row_index variable name", row_index)
+        print("self.selected: ", self.selected)
+        print("self.post_rep_function_row_index", self.post_rep_function_row_index)
+
         self.postrep_window = tk.Tk()
         self.postrep_window.geometry("500x250")
         self.postrep_window.title("Post-Processing Page")
@@ -1947,6 +1953,11 @@ class Post_Processing_Window():
             self.crn_across_budget = self.experiment_list[1] # boolean
             self.crn_across_macroreps = self.experiment_list[2] # boolean
 
+            print("This is the experiment object", self.my_experiment)
+            print("This is the problem name: ", self.my_experiment.problem.name)
+            print("This is the solver name: ", self.my_experiment.solver.name)
+            print("This is the experiment list", self.selected)
+            print ("This is experiment_list ", self.experiment_list)
             # self, n_postreps, crn_across_budget=True, crn_across_macroreps=False
             self.my_experiment.post_replicate(self.n_postreps, self.crn_across_budget, self.crn_across_macroreps)
 
