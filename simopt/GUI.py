@@ -1702,8 +1702,8 @@ class Cross_Design_Window():
             self.crossdesign_button.place(x=15, y=135+(25*problem_cnt))
 
     def confirm_cross_design_function(self):
-        solver_names_list = ["ASTRODF","RNDSRCH","SANE"] #solver_directory.keys()
-        problem_names_list = ["CNTNEWS-1","MM1-1","FACSIZE-1","FACSIZE-2","RMITD-1","SSCONT-1"] #problem_directory.keys()y
+        solver_names_list = list(solver_directory.keys())
+        problem_names_list = list(problem_directory.keys())
         problem_list = []
         solver_list = []
 
@@ -2409,6 +2409,8 @@ class Plot_Window():
 
             problemList = ""
             probs = []
+            # Appends experiment that is part of the experiment list if it matches what was chosen in the problem
+            # menu 
             for i in self.problem_menu.curselection():
                 problemList = problemList + self.problem_menu.get(i) + " "
                 for exp in self.experiment_list:
@@ -2423,7 +2425,7 @@ class Plot_Window():
             elif self.bad_label != None:
                 self.bad_label.destroy()
                 self.bad_label = None
-
+            
             self.plot_exp_list.append(self.solvers)
 
             plotType = str(self.plot_var.get())
@@ -2432,7 +2434,7 @@ class Plot_Window():
             i = len(self.plot_type_list)-1
             exp = self.plot_exp_list[len(self.plot_exp_list)-1]
             exp2 = [[e] for e in exp]
-            
+
             #keep as list of list for multiple solvers if using exp2
             #one problem, multiple solvers
 
@@ -2454,31 +2456,33 @@ class Plot_Window():
             hw = param_value_list[2]
             
             if self.plot_type_list[i] == "Mean Progress Curve":
-                path_name = wrapper_base.plot_progress_curves(exp,plot_type="mean", beta = 0.5, normalize=param_value_list[3], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
+                path_name = wrapper_base.plot_progress_curves(exp,plot_type="mean", normalize=param_value_list[3], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[3]}
             elif self.plot_type_list[i] == "Quatile Progress Curve":
-                path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3],normalize=param_value_list[4], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
+                path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3], normalize=param_value_list[4], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[4], "beta":param_value_list[3]}
             elif self.plot_type_list[i] == "Solve time CDF":
-                path_name = wrapper_base.plot_solvability_cdfs(exp,solve_tol=param_value_list[3], all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw)
+                path_name = wrapper_base.plot_solvability_cdfs(exp,solve_tol=param_value_list[3], plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3]}
             elif self.plot_type_list[i] == "Scatter Plot":
-                path_name = wrapper_base.plot_area_scatterplots(exp2,all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw)
+                path_name = wrapper_base.plot_area_scatterplots(exp2, plot_CIs=ci, print_max_hw=hw)
                 param_list = {}
             elif self.plot_type_list[i] == "CDF Solvability":
-                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "cdf_solvability", all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],ref_solver=None)
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "cdf_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],ref_solver=None)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3]}
             elif self.plot_type_list[i] == "Quantile Solvability":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"beta":param_value_list[4]}
-                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "quantile_solvability",all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=None)
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=None)
             elif self.plot_type_list[i] == "CDF Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[4]}
-                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_cdf_solvability", all_in_one = plot_together, plot_CIs=ci, print_max_hw=hw,solve_tol=param_value_list[3], beta=param_value_list[4], ref_solver=param_value_list[4])
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_cdf_solvability", plot_CIs=ci, print_max_hw=hw,solve_tol=param_value_list[3], ref_solver=param_value_list[4])
             elif self.plot_type_list[i] == "Quanitle Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[5],"beta":param_value_list[4]}
-                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", all_in_one = plot_together, plot_CIs=ci,print_max_hw=hw, solve_tol=param_value_list[3], beta=param_value_list[4],ref_solver=param_value_list[5])
+                path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3], beta=param_value_list[4],ref_solver=param_value_list[5])
             else:
-                print(self.plot_type_list[i])
+                print(f"{self.plot_type_list[i]} is the plot_type_list at index {i}")
+
+
             for i,new_plot in enumerate(path_name):
                 place = self.num_plots + 1
                 if len(path_name) == 1:
@@ -2607,6 +2611,8 @@ class Plot_Window():
             for i in self.solver_menu.curselection():
                 self.solvers_names.append(self.solver_menu.get(i))
 
+            #for item in self.params:
+             #   print(f"Item's value: {item.get()} at index {self.params.index(item)} in self.params list")
 
             i = 1
             for param, param_val in param_list.items():
