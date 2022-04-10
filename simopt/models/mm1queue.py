@@ -447,4 +447,5 @@ class MM1MinMeanSojournTime(Problem):
         """
         # Generate an Exponential(rate = 1/3) r.v.
         x = (rand_sol_rng.expovariate(1 / 3),)
+        print(x)
         return x
