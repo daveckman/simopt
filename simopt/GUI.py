@@ -1953,11 +1953,11 @@ class Post_Processing_Window():
             self.crn_across_budget = self.experiment_list[1] # boolean
             self.crn_across_macroreps = self.experiment_list[2] # boolean
 
-            print("This is the experiment object", self.my_experiment)
-            print("This is the problem name: ", self.my_experiment.problem.name)
-            print("This is the solver name: ", self.my_experiment.solver.name)
-            print("This is the experiment list", self.selected)
-            print ("This is experiment_list ", self.experiment_list)
+            # print("This is the experiment object", self.my_experiment)
+            # print("This is the problem name: ", self.my_experiment.problem.name)
+            # print("This is the solver name: ", self.my_experiment.solver.name)
+            # print("This is the experiment list", self.selected)
+            # print ("This is experiment_list ", self.experiment_list)
             # self, n_postreps, crn_across_budget=True, crn_across_macroreps=False
             self.my_experiment.post_replicate(self.n_postreps, self.crn_across_budget, self.crn_across_macroreps)
 
@@ -2724,7 +2724,9 @@ class Plot_Window():
 
             width = 400
             height = 400
+            print("This is path",path_name)
             img = Image.open(path_name)
+
             img = img.resize((width,height), Image.ANTIALIAS)
             img =  ImageTk.PhotoImage(img)
             # img = tk.PhotoImage(file=path_name)
