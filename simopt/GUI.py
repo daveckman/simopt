@@ -1,7 +1,7 @@
 from os import path
 from random import expovariate
 import tkinter as tk
-from tkinter import Place, ttk, Scrollbar, filedialog
+from tkinter import NONE, Place, ttk, Scrollbar, filedialog
 from timeit import timeit
 from functools import partial
 from tkinter.constants import FALSE, MULTIPLE, S
@@ -1490,7 +1490,7 @@ class Experiment_Window(tk.Tk):
         self.postrep_window.title("Plotting Page")
         # self.master.destroy()
         # Plot_Window(self.postrep_window, self.my_experiment.experiments[0], self, True, self.meta_experiment_master_list[row_index])
-        Plot_Window(self.postrep_window, exps, self)
+        Plot_Window(self.postrep_window,self, experiment_list = exps, meta= True, metaList = self.my_experiment)
 
     def run_meta_function(self, integer):      
 
@@ -2173,7 +2173,7 @@ class Post_Normal_Window():
             self.postrep_window.geometry("1000x800")
             self.postrep_window.title("Plotting Page")
             self.master.destroy()
-            Plot_Window(self.postrep_window, self.post_norm_exp_list, self.main_window)
+            Plot_Window(self.postrep_window, self.main_window, experiment_list = self.post_norm_exp_list)
 
             return
 
@@ -2200,14 +2200,15 @@ class Plot_Window():
         experiment_list : list
             List of experiment object arguments
         """
-        def __init__(self, master, experiment_list, main_window, meta=False, metaList=None):
+        def __init__(self, master, main_window, experiment_list = None, meta=False, metaList=None):
 
             self.metaList = metaList
             self.master = master
+            self.meta_status = meta
             self.experiment_list = experiment_list
             self.main_window = main_window
             self.plot_types_inputs = ["cdf_solvability", "quantile_solvability","diff_cdf_solvability","diff_quantile_solvability"]
-            self.plot_type_names = ["Mean Progress Curve", "Quatile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quanitle Difference Plot"]
+            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot"]
             self.num_plots = 0
             self.plot_exp_list = []
             self.plot_type_list = []
@@ -2445,7 +2446,8 @@ class Plot_Window():
             i = len(self.plot_type_list)-1
             exp = self.plot_exp_list[len(self.plot_exp_list)-1]
             exp2 = [[e] for e in exp]
-
+            print(exp)
+            print(exp2)
             #keep as list of list for multiple solvers if using exp2
             #one problem, multiple solvers
 
@@ -2466,10 +2468,37 @@ class Plot_Window():
             plot_together = param_value_list[1]
             hw = param_value_list[2]
             
+            #if (self.experiment_list != None) and (self.metaList == None):
+                #exp = self.plot_exp_list[len(self.plot_exp_list)-1]
+                #print(exp)
+                #for item in exp:
+                   # print(item.solver.name)
+            #elif (self.metaList != None) and (self.experiment_list == None):
+                #print(self.metaList)
+                #for item in self.metaList:
+                    #print(item.solver.name)
+            #else:
+               # exp = self.plot_exp_list[len(self.plot_exp_list)-1]
+                #print("This is what exp is",exp)
+                #print("This is what metaList is", self.metaList.experiments)
+                #for item in exp:
+                    #print(item.solver.name)
+                #print("End of exp,starting self.metaList") 
+                #for sublist in self.metaList.experiments:
+                    #for item in sublist:
+                        #print(item.solver.name)
+            if self.metaList != None:
+                exp = []
+                exp2 = self.metaList.experiments
+                for sublist in self.metaList.experiments:
+                    for item in sublist:
+                        exp.append(item)
+
+
             if self.plot_type_list[i] == "Mean Progress Curve":
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type="mean", normalize=param_value_list[3], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[3]}
-            elif self.plot_type_list[i] == "Quatile Progress Curve":
+            elif self.plot_type_list[i] == "Quantile Progress Curve":
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3], normalize=param_value_list[4], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[4], "beta":param_value_list[3]}
             elif self.plot_type_list[i] == "Solve time CDF":
@@ -2487,7 +2516,7 @@ class Plot_Window():
             elif self.plot_type_list[i] == "CDF Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_cdf_solvability", plot_CIs=ci, print_max_hw=hw,solve_tol=param_value_list[3], ref_solver=param_value_list[4])
-            elif self.plot_type_list[i] == "Quanitle Difference Plot":
+            elif self.plot_type_list[i] == "Quantile Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[5],"beta":param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3], beta=param_value_list[4],ref_solver=param_value_list[5])
             else:
@@ -2582,7 +2611,7 @@ class Plot_Window():
             # beta=0.50, normalize=True
             if plot_choice == "Mean Progress Curve":
                 param_list = {'normalize':True}
-            elif plot_choice == "Quatile Progress Curve":
+            elif plot_choice == "Quantile Progress Curve":
                 param_list = {'beta':0.50, 'normalize':True}
             elif plot_choice == "Solve Time CDF":
                 param_list = {'solve_tol':0.1}
@@ -2594,7 +2623,7 @@ class Plot_Window():
                 param_list = {'solve_tol':0.1, 'beta':0.5}
             elif plot_choice == "CDF Difference Plot":
                 param_list = {'solve_tol':0.1, 'ref_solver':None}
-            elif plot_choice == "Quanitle Difference Plot":
+            elif plot_choice == "Quantile Difference Plot":
                 param_list = {'solve_tol':0.1, 'beta':0.5, 'ref_solver':None}
             else:
                 print("invalid plot?")
@@ -2687,7 +2716,7 @@ class Plot_Window():
             c = 0
             #(self.plot_exp_list)
             #  self.plot_types_inputs = ["cdf_solvability", "quantile_solvability","diff_cdf_solvability","diff_quantile_solvability"]
-            # self.plot_type_names = ["Mean Progress Curve", "Quatile Progress Curve", "Solve time cdf", "Scatter Plot", "cdf Solvability","Quantile Solvability","cdf Difference Plot", "Quanitle Difference Plot"]
+            # self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve time cdf", "Scatter Plot", "cdf Solvability","Quantile Solvability","cdf Difference Plot", "Quanitle Difference Plot"]
 
             for i,path_name in enumerate(self.all_path_names):
 
