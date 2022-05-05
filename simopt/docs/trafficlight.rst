@@ -1,119 +1,115 @@
-Model: <Traffic Control> (<trafficlight>)
+Model: Traffic Control (trafficlight)
 ==========================================
 
 Description:
 ------------
-<A model that simulates a series of intersections and their light schedules. As cars travel through the system, their waiting time is tracked.>
+A model that simulates a series of intersections and their light schedules. 
+As cars travel through the system, their waiting time is tracked.
 
-Sample math... :math:`S = 1500`
+This model simulates a number of cars traveling through a series of intersections. These intersections are on
+their own schedules, and their interval is defined at the beginning of a simulation run. As the model generates
+cars, they travel through the system according to the intersections' light schedules and to their own 
+speed and capability.
 
-Sample math... 
+Ultimately, many different factors of the model can be changed in order to see the circumstances in which average
+waiting time for any given car is the lowest it can be. This will create safer roads and happier drivers.
 
-.. math::
-   \frac{ \sum_{t=0}^{N}f(t,k) }{N}
 Sources of Randomness:
 ----------------------
-<There are three sources of randomness in this model. All are created using the mrg32k3a random number generator.>
+There are three sources of randomness in this model. All are created using the mrg32k3a random number generator.
 
-<The first two are modeled with uniform distributions and represent the start and end points of a car's path.>
+The first two are modeled with uniform distributions and represent the start and end points of a car's path.
 
-* <Start and End Points>: <Random integer from 0 to the number of intersections>
+* Start and End Points: Random integer from 0 to the number of intersections
 
-<The third is modeled with an exponential distribution and represents the interarrival times of the cars.>
+The third is modeled with an exponential distribution and represents the interarrival times of the cars.
 
-* <Interarrival Times>: <Exponentially distributed random variable with parameter lambda.>
+* Interarrival Times: Exponentially distributed random variable with parameter lambda.
 
 Model Factors:
 --------------
-* <lambda>: <Float. Rate parameter of interarrival time distribution.>
+* lambda: Rate parameter of interarrival time distribution. (float)
 
-    * Default: <0.5>
+    * Default: 0.5
 
-* <runtime>: <Float. Total time that the simulation runs.>
+* runtime: Total time that the simulation runs. (float)
 
-    * Default: <50>
+    * Default: 50
 
-* <numintersections>: <Int. Number of intersections.>
+* numintersections: Number of intersections. (int)
 
-    * Default: <4>
+    * Default: 4
 
-* <interval>: <Float. Interval of time between light changes.>
+* interval: Interval of time between light changes. (float)
 
-    * Default: <5>    
+    * Default: 5    
 
-* <offset>: <List. Delay in light schedule based on distance from first intersection.>
+* offset: Delay in light schedule based on distance from first intersection. (list)
 
-    * Default: <[0, 0, 0, 0]>
+    * Default: [0, 0, 0, 0]
 
-* <speed>: <Float. Constant that represents speed of cars when moving.>
+* speed: Constant that represents speed of cars when moving. (float)
 
-    * Default: <2.5>  
+    * Default: 2.5  
 
-* <distance>: <Float. Distance of travel between roads.>
+* distance: Distance of travel between roads. (float)
 
-    * Default: <5>
+    * Default: 5
 
-* <carlength>: <Float. Length of each car.>
+* carlength: Length of each car. (float)
 
-    * Default: <1>  
+    * Default: 1  
 
-* <reaction>: <Float. Reaction time of cars in queue.>
+* reaction: Reaction time of cars in queue. (float)
 
-    * Default: <0.1>
+    * Default: 0.1
 
 Responses:
 ---------
-* <WaitingTime>: <The average time a car sits in a queue.>
+* WaitingTime: The average time a car sits in a queue.
 
 
-Optimization Problem: <Minimum Waiting Time in System> (<MinWaitingTime>)
+Optimization Problem: Minimum Waiting Time in System (MinWaitingTime)
 ========================================================
 
 Decision Variables:
 -------------------
-* <offset>
+* offset
 
 Objectives:
 -----------
-<Minimize the average waiting time (<WaitingTime>) in system for the cars.>
+Minimize the average waiting time (WaitingTime) in system for the cars.
 
 Constraints:
 ------------
-<All values in offset should be greater than 0.>
+All values in offset should be greater than 0.
 
 Problem Factors:
 ----------------
-* <factor1name>: <short description>
+* initial_solution: Initial solution from which the solver starts.
 
-  * Default: <default value>
+  * Default: (0, 0, 0, 0)
 
-* <factor2name>: <short description>
+* budget: Max # of replications for a solver to take.
 
-  * Default: <default value>
+  * Default: 100
 
-Fixed Model Factors:
---------------------
-* <factor1name>: <fixed value>
-
-* <factor2name>: <fixed value>
 
 Starting Solution: 
 ------------------
-* <dv1name>: <dv1initialvalue>
-
-* <dv2name>: <dv2initialvalue>
+* offset: [0, 0, 0, 0]
 
 Random Solutions: 
 ------------------
-<description of how to generate random solutions>
+description of how to generate random solutions
 
 Optimal Solution:
 -----------------
-<Unknowsn>
+ Unknown
 
 Optimal Objective Function Value:
 ---------------------------------
-<Unknown>
+Unknown
 
 
 ...
