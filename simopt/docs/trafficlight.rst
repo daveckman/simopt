@@ -99,10 +99,6 @@ Starting Solution:
 ------------------
 * offset: [0, 0, 0, 0]
 
-Random Solutions: 
-------------------
-description of how to generate random solutions
-
 Optimal Solution:
 -----------------
  Unknown
