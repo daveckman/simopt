@@ -2208,7 +2208,7 @@ class Plot_Window():
             self.experiment_list = experiment_list
             self.main_window = main_window
             self.plot_types_inputs = ["cdf_solvability", "quantile_solvability","diff_cdf_solvability","diff_quantile_solvability"]
-            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot"]
+            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot", "Box", "Violin","Terminal Scatter"]
             self.num_plots = 0
             self.plot_exp_list = []
             self.plot_type_list = []
@@ -2519,6 +2519,15 @@ class Plot_Window():
             elif self.plot_type_list[i] == "Quantile Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[5],"beta":param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3], beta=param_value_list[4],ref_solver=param_value_list[5])
+            elif self.plot_type_list[i] == "Box":
+                param_list = {"normalize":param_value_list[3]}
+                path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "box", normalize = param_value_list[3], all_in_one = plot_together)
+            elif self.plot_type_list[i] == "Violin":
+                param_list = {"normalize":param_value_list[3]}
+                path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "violin", normalize = param_value_list[3], all_in_one = plot_together)
+            elif self.plot_type_list[i] == "Terminal Scatter":
+                param_list = {}
+                path_name = wrapper_base.plot_terminal_scatterplots(exp2, plot_type ="terminal_scatter", all_in_one= plot_together)
             else:
                 print(f"{self.plot_type_list[i]} is the plot_type_list at index {i}")
 
@@ -2625,6 +2634,12 @@ class Plot_Window():
                 param_list = {'solve_tol':0.1, 'ref_solver':None}
             elif plot_choice == "Quantile Difference Plot":
                 param_list = {'solve_tol':0.1, 'beta':0.5, 'ref_solver':None}
+            elif plot_choice == "Box":
+                param_list = {'normalize': True}
+            elif plot_choice == "Violin":
+                param_list = {'normalize':True}
+            elif plot_choice == "Terminal Scatter":
+                param_list = {}
             else:
                 print("invalid plot?")
             self.param_list = param_list
