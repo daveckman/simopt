@@ -2527,7 +2527,7 @@ class Plot_Window():
                 path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "violin", normalize = param_value_list[3], all_in_one = plot_together)
             elif self.plot_type_list[i] == "Terminal Scatter":
                 param_list = {}
-                path_name = wrapper_base.plot_terminal_scatterplots(exp2, plot_type ="terminal_scatter", all_in_one= plot_together)
+                path_name = wrapper_base.plot_terminal_scatterplots(exp2, plot_type="terminal_scatter", all_in_one = plot_together)
             else:
                 print(f"{self.plot_type_list[i]} is the plot_type_list at index {i}")
 

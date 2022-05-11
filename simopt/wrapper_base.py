@@ -1944,7 +1944,7 @@ def plot_terminal_progress(experiments, plot_type="violin", normalize=True, all_
     return file_list
 
 
-def plot_terminal_scatterplots(experiments, all_in_one=True):
+def plot_terminal_scatterplots(experiments, plot_type, all_in_one=True):
     """
     Plot a scatter plot of mean and standard deviation of terminal progress.
     Either one plot for each solver or one plot for all solvers.
