@@ -350,9 +350,10 @@ class Experiment_Window(tk.Tk):
             label_problem = tk.Label(master=self.factor_tab_one_problem, text=heading, font="Calibri 14 bold")
             label_problem.grid(row=0, column=self.factor_heading_list_problem.index(heading), padx=10, pady=3)
 
-        
+        print("Self.provlem.var.get()",self.problem_var.get())
         self.problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
-
+        #self.problem_object = problem_solver_abbreviated_to_object(self.problem_var.get(),problem_directory)
+        print("Self.problem_object",self.problem_object)
         count_factors_problem = 1
         for num, factor_type in enumerate(self.problem_object().specifications, start=0):
             #(factor_type, len(self.problem_object().specifications[factor_type]['default']) )
@@ -864,10 +865,17 @@ class Experiment_Window(tk.Tk):
         #(current_experiment)
         current_experiment_arguments = self.experiment_master_list[row_index-1]
 
-        self.problem_var.set(current_experiment_arguments[0])
+        
+        
+        #self.problem_var.set(current_experiment_arguments[0])
+        self.problem_var.set(problem_solver_abbreviated_name_to_unabbreviated(current_experiment_arguments[0], problem_directory, problem_nonabbreviated_directory))
+
         self.solver_var.set(current_experiment_arguments[1])
+        #self.solver_var.set(problem_solver_abbreviated_name_to_unabbreviated(current_experiment_arguments[1], solver_directory, solver_nonabbreviated_directory))'
+    
         self.macro_var.set(current_experiment_arguments[2])
         self.show_problem_factors(True, current_experiment_arguments)
+        
         # self.my_experiment[1][3][1]
         self.show_solver_factors(True, current_experiment_arguments)
 
@@ -2380,6 +2388,7 @@ class Plot_Window():
 
             tf_list = ['True','False']
             self.settings_label_frame.place(relx=.65, rely=.15, relheight=.2, relwidth=.3)
+            
 
             # Confidence Interval Checkbox
             entry1 = tk.Checkbutton(self.settings_canvas, variable=self.params[0], onvalue="True", offvalue="False")
@@ -2794,6 +2803,16 @@ def problem_solver_nonabbreviated_to_object(problem_or_solver,nonabbreviated_dic
     else:
         print(f"{problem_or_solver} not found in {nonabbreviated_dictionary}")
 
+def problem_solver_abbreviated_name_to_unabbreviated(problem_or_solver, abbreviated_dictionary, nonabbreviated_dictionary):
+    if problem_or_solver in abbreviated_dictionary.keys():
+        problem_or_solver_object = abbreviated_dictionary[problem_or_solver]
+        for key, value in nonabbreviated_dictionary.items():
+            if problem_or_solver_object == value:
+                problem_or_solver_unabbreviated_name = key
+        return problem_or_solver_unabbreviated_name
+
+    else:
+        print(f"{problem_or_solver} not found in {abbreviated_dictionary}")
 def main():
     root = tk.Tk()
     root.title("SimOpt Library Graphical User Interface")
