@@ -2518,7 +2518,7 @@ class Plot_Window():
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "cdf_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],ref_solver=None)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3]}
             elif self.plot_type_list[i] == "Quantile Solvability":
-                param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"beta":param_value_list[4]}
+                param_list = {"plot CIs":ci, "print max hw":hw, "solve tol": param_value_list[3], "beta": param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=None)
             elif self.plot_type_list[i] == "CDF Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[4]}
@@ -2683,10 +2683,36 @@ class Plot_Window():
             self.solvers_names = []
             for i in self.solver_menu.curselection():
                 self.solvers_names.append(self.solver_menu.get(i))
+            
+            # Plot Settings
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Solvability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
+                # Confidence Intervals
+                entry1 = tk.Checkbutton(self.settings_canvas, variable=self.params[0], onvalue="True", offvalue="False")
+                entry1.select()
+                # entry1 = ttk.OptionMenu(self.settings_canvas, self.params[0], "True", *tf_list)
+                label1 = tk.Label(master=self.settings_canvas, text="Confidence Intervals", font="Calibri 14")
+                label1.grid(row=0, column=0, padx=10, pady=3)
+                entry1.grid(row=0, column=1, padx=10, pady=3)
 
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice == "Box" or plot_choice == "Violin" or plot_choice == "Terminal Scatter":
+                # Plot Together Checkbox
+                entry = tk.Checkbutton(self.settings_canvas, variable=self.params[1], onvalue="True", offvalue="False")
+                entry.select()
+                # Creates the Check Mark that checks whether the plots will be plot together
+                label = tk.Label(master=self.settings_canvas, text="Plot Together", font="Calibri 14")
+                label.grid(row=1, column=0, padx=10, pady=3)
+                entry.grid(row=1, column=1, padx=10, pady=3) 
+            
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Solvability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
+                # Print Max HW
+                entry2 = tk.Checkbutton(self.settings_canvas, variable=self.params[2], onvalue="True", offvalue="False")
+                entry2.select()
+                label2 = tk.Label(master=self.settings_canvas, text="Print Max HW", font="Calibri 14")
+                label2.grid(row=2, column=0, padx=10, pady=3)
+                entry2.grid(row=2, column=1, padx=10, pady=3)
             #for item in self.params:
              #   print(f"Item's value: {item.get()} at index {self.params.index(item)} in self.params list")
-
+            
             i = 1
             for param, param_val in param_list.items():
 
@@ -2726,31 +2752,12 @@ class Plot_Window():
                         entry.delete(0, 'end')
                         entry.insert(index=tk.END, string=param_val)
                     entry.grid(row=i, column=1, padx=10, pady=3)
+                
                 i += 1
-             # Plot Settings
-            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Sovability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
-                entry1 = tk.Checkbutton(self.settings_canvas, variable=self.params[0], onvalue="True", offvalue="False")
-                entry1.select()
-                # entry1 = ttk.OptionMenu(self.settings_canvas, self.params[0], "True", *tf_list)
-                label1 = tk.Label(master=self.settings_canvas, text="Confidence Intervals", font="Calibri 14")
-                label1.grid(row=0, column=0, padx=10, pady=3)
-                entry1.grid(row=0, column=1, padx=10, pady=3)
-              
-            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Sovability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
-                entry2 = tk.Checkbutton(self.settings_canvas, variable=self.params[2], onvalue="True", offvalue="False")
-                entry2.select()
-                label2 = tk.Label(master=self.settings_canvas, text="Print Max HW", font="Calibri 14")
-                label2.grid(row=2, column=0, padx=10, pady=3)
-                entry2.grid(row=2, column=1, padx=10, pady=3)
 
-            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice == "Box" or plot_choice == "Violin" or plot_choice == "Terminal Scatter":
-                # Plot Together Checkbox
-                entry = tk.Checkbutton(self.settings_canvas, variable=self.params[1], onvalue="True", offvalue="False")
-                entry.select()
-                # Creates the Check Mark that checks whether the plots will be plot together
-                label = tk.Label(master=self.settings_canvas, text="Plot Together", font="Calibri 14")
-                label.grid(row=1, column=0, padx=10, pady=3)
-                entry.grid(row=1, column=1, padx=10, pady=3)
+             
+
+            
         
 
         def clear_row(self, place):
