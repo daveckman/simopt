@@ -350,10 +350,9 @@ class Experiment_Window(tk.Tk):
             label_problem = tk.Label(master=self.factor_tab_one_problem, text=heading, font="Calibri 14 bold")
             label_problem.grid(row=0, column=self.factor_heading_list_problem.index(heading), padx=10, pady=3)
 
-        print("Self.provlem.var.get()",self.problem_var.get())
+        
         self.problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
-        #self.problem_object = problem_solver_abbreviated_to_object(self.problem_var.get(),problem_directory)
-        print("Self.problem_object",self.problem_object)
+        
         count_factors_problem = 1
         for num, factor_type in enumerate(self.problem_object().specifications, start=0):
             #(factor_type, len(self.problem_object().specifications[factor_type]['default']) )
@@ -2283,8 +2282,7 @@ class Plot_Window():
 
 
             # self.problem_menu = tk.Listbox(self.master, self.problem_var, "Problem", *self.all_problems, command=self.experiment_list[0].problem.name)
-            self.plot_menu = ttk.OptionMenu(self.master, self.plot_var, "Plot", *self.plot_type_names, command=partial(self.get_parameters, self.plot_var))
-
+            self.plot_menu = ttk.OptionMenu(self.master, self.plot_var, "Plot", *self.plot_type_names, command=partial(self.get_parameters_and_settings, self.plot_var))
             self.solver_label = tk.Label(master=self.master, # window label is used in
                             text = "Select Solver(s):*",
                             font = "Calibri 13")
@@ -2388,8 +2386,8 @@ class Plot_Window():
 
             tf_list = ['True','False']
             self.settings_label_frame.place(relx=.65, rely=.15, relheight=.2, relwidth=.3)
-            
-
+           
+            """
             # Confidence Interval Checkbox
             entry1 = tk.Checkbutton(self.settings_canvas, variable=self.params[0], onvalue="True", offvalue="False")
             entry1.select()
@@ -2411,7 +2409,7 @@ class Plot_Window():
             label2 = tk.Label(master=self.settings_canvas, text="Print Max HW", font="Calibri 14")
             label2.grid(row=2, column=0, padx=10, pady=3)
             entry2.grid(row=2, column=1, padx=10, pady=3)
-
+            """
 
             # self.frame.pack(fill='both')
 
@@ -2459,7 +2457,7 @@ class Plot_Window():
             print(exp2)
             #keep as list of list for multiple solvers if using exp2
             #one problem, multiple solvers
-
+            
             param_value_list = []
             for t in self.params:
                 #(t.get())
@@ -2510,8 +2508,8 @@ class Plot_Window():
             elif self.plot_type_list[i] == "Quantile Progress Curve":
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3], normalize=param_value_list[4], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[4], "beta":param_value_list[3]}
-            elif self.plot_type_list[i] == "Solve time CDF":
-                path_name = wrapper_base.plot_solvability_cdfs(exp,solve_tol=param_value_list[3], plot_CIs=ci, print_max_hw=hw)
+            elif self.plot_type_list[i] == "Solve Time CDF":
+                path_name = wrapper_base.plot_solvability_cdfs(exp, solve_tol = param_value_list[3], plot_CIs=ci, print_max_hw=hw)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3]}
             elif self.plot_type_list[i] == "Scatter Plot":
                 path_name = wrapper_base.plot_area_scatterplots(exp2, plot_CIs=ci, print_max_hw=hw)
@@ -2532,7 +2530,7 @@ class Plot_Window():
                 param_list = {"normalize":param_value_list[3]}
                 path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "box", normalize = param_value_list[3], all_in_one = plot_together)
             elif self.plot_type_list[i] == "Violin":
-                param_list = {"normalize":param_value_list[3]}
+                param_list = {"all in one" :plot_together,"normalize":param_value_list[3]}
                 path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "violin", normalize = param_value_list[3], all_in_one = plot_together)
             elif self.plot_type_list[i] == "Terminal Scatter":
                 param_list = {}
@@ -2616,9 +2614,9 @@ class Plot_Window():
         def solver_select_function(self,a):
             # if user clicks plot type then a solver, this is update parameters
             if self.plot_var.get() != "Plot" and self.plot_var.get() != "":
-                self.get_parameters(0, self.plot_var.get())
+                self.get_parameters_and_settings(0, self.plot_var.get())
 
-        def get_parameters(self,a, plot_choice):
+        def get_parameters_and_settings(self,a, plot_choice):
             # ref solver needs to a drop down of solvers that is selected in the problem
             # numbers between 0 and 1
             # checkbox for normalize
@@ -2667,7 +2665,18 @@ class Plot_Window():
             self.CI_canvas.grid_rowconfigure(0)
 
             self.CI_label_frame.place(relx=.4, rely=.15, relheight=.2, relwidth=.25)
+            
+            self.settings_label_frame.destroy()
+            self.settings_label_frame = ttk.LabelFrame(master=self.master, text="Plot Settings (Optional)")
+            self.settings_canvas = tk.Canvas(master=self.settings_label_frame, borderwidth=0)
+            self.settings_frame = ttk.Frame(master=self.settings_canvas)
 
+            self.settings_canvas.pack(side="left", fill="both", expand=True)
+            self.settings_canvas.create_window((0,0), window=self.settings_frame, anchor="nw",
+                                    tags="self.queue_frame")
+            self.settings_canvas.grid_rowconfigure(0)
+
+            self.settings_label_frame.place(relx=.65, rely=.15, relheight=.2, relwidth=.3)
 
             tf_list = ['True','False']
 
@@ -2718,6 +2727,31 @@ class Plot_Window():
                         entry.insert(index=tk.END, string=param_val)
                     entry.grid(row=i, column=1, padx=10, pady=3)
                 i += 1
+             # Plot Settings
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Sovability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
+                entry1 = tk.Checkbutton(self.settings_canvas, variable=self.params[0], onvalue="True", offvalue="False")
+                entry1.select()
+                # entry1 = ttk.OptionMenu(self.settings_canvas, self.params[0], "True", *tf_list)
+                label1 = tk.Label(master=self.settings_canvas, text="Confidence Intervals", font="Calibri 14")
+                label1.grid(row=0, column=0, padx=10, pady=3)
+                entry1.grid(row=0, column=1, padx=10, pady=3)
+              
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Sovability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
+                entry2 = tk.Checkbutton(self.settings_canvas, variable=self.params[2], onvalue="True", offvalue="False")
+                entry2.select()
+                label2 = tk.Label(master=self.settings_canvas, text="Print Max HW", font="Calibri 14")
+                label2.grid(row=2, column=0, padx=10, pady=3)
+                entry2.grid(row=2, column=1, padx=10, pady=3)
+
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice == "Box" or plot_choice == "Violin" or plot_choice == "Terminal Scatter":
+                # Plot Together Checkbox
+                entry = tk.Checkbutton(self.settings_canvas, variable=self.params[1], onvalue="True", offvalue="False")
+                entry.select()
+                # Creates the Check Mark that checks whether the plots will be plot together
+                label = tk.Label(master=self.settings_canvas, text="Plot Together", font="Calibri 14")
+                label.grid(row=1, column=0, padx=10, pady=3)
+                entry.grid(row=1, column=1, padx=10, pady=3)
+        
 
         def clear_row(self, place):
             # self.plot_CI_list.pop(place)
@@ -2795,6 +2829,8 @@ class Plot_Window():
             if c == 4:
                 c = 0
                 ro += 1
+        
+
 def problem_solver_nonabbreviated_to_object(problem_or_solver,nonabbreviated_dictionary):
     if problem_or_solver in nonabbreviated_dictionary.keys():
         problem_or_solver_object = nonabbreviated_dictionary[problem_or_solver]
