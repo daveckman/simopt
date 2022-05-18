@@ -418,9 +418,12 @@ class Experiment_Window(tk.Tk):
         count_factors_problem += 1
         if args and len(args) == 2 and args[0] == True:
             oldname = args[1][3][1]
+            print("oldname", oldname)
+            print("args", args)
         else:
             problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
             oldname = problem_object().name
+            print("oldname 2", oldname)
 
         self.save_label_problem = tk.Label(master=self.factor_tab_one_problem,
                                             text = "Save Problem As",
@@ -428,6 +431,8 @@ class Experiment_Window(tk.Tk):
 
         self.save_var_problem = tk.StringVar(self.factor_tab_one_problem)
         self.save_entry_problem = ttk.Entry(master=self.factor_tab_one_problem, textvariable = self.save_var_problem, justify = tk.LEFT)
+        print("self.factor_tab_one_prblem", self.factor_tab_one_problem)
+        print("self.save_var_problem",self.save_var_problem.get())
         self.save_entry_problem.insert(index=tk.END, string=oldname)
 
         self.save_label_problem.grid(row=count_factors_problem, column=0, sticky='nsew')
@@ -864,14 +869,14 @@ class Experiment_Window(tk.Tk):
         #(current_experiment)
         current_experiment_arguments = self.experiment_master_list[row_index-1]
 
+        print("current_experiemnt_arguments", current_experiment_arguments)
         
+        self.problem_var.set(current_experiment_arguments[0])
+        #self.problem_var.set(problem_solver_abbreviated_name_to_unabbreviated(current_experiment_arguments[0], problem_directory, problem_nonabbreviated_directory))
         
-        #self.problem_var.set(current_experiment_arguments[0])
-        self.problem_var.set(problem_solver_abbreviated_name_to_unabbreviated(current_experiment_arguments[0], problem_directory, problem_nonabbreviated_directory))
-
         self.solver_var.set(current_experiment_arguments[1])
         #self.solver_var.set(problem_solver_abbreviated_name_to_unabbreviated(current_experiment_arguments[1], solver_directory, solver_nonabbreviated_directory))'
-    
+        
         self.macro_var.set(current_experiment_arguments[2])
         self.show_problem_factors(True, current_experiment_arguments)
         
@@ -955,7 +960,7 @@ class Experiment_Window(tk.Tk):
                 problem_object, self.problem_name = problem_solver_nonabbreviated_to_object(self.problem_name,problem_nonabbreviated_directory)
                 
 
-                self.selected[0] = self.problem_name
+                # self.selected[0] = self.problem_name
 
                 self.my_experiment = Experiment(solver_name=self.solver_name, problem_name=self.problem_name, solver_rename=self.solver_rename, problem_rename=self.problem_rename, solver_fixed_factors=self.solver_factors, problem_fixed_factors=self.problem_factors, model_fixed_factors=self.oracle_factors)
                 self.my_experiment.n_macroreps = self.selected[2]
@@ -2215,7 +2220,7 @@ class Plot_Window():
             self.experiment_list = experiment_list
             self.main_window = main_window
             self.plot_types_inputs = ["cdf_solvability", "quantile_solvability","diff_cdf_solvability","diff_quantile_solvability"]
-            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot", "Box", "Violin","Terminal Scatter"]
+            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot", "Box Plot", "Terminal Scatter"]
             self.num_plots = 0
             self.plot_exp_list = []
             self.plot_type_list = []
@@ -2504,6 +2509,8 @@ class Plot_Window():
 
             if self.plot_type_list[i] == "Mean Progress Curve":
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type="mean", normalize=param_value_list[3], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
+                print("param_list Mean Progress Curve", param_list)
+                print("param_value_list Mean progress Curve ", param_value_list)
                 param_list = {"plot CIs":ci, "print max hw":hw, "normalize":param_value_list[3]}
             elif self.plot_type_list[i] == "Quantile Progress Curve":
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3], normalize=param_value_list[4], all_in_one=plot_together, plot_CIs=ci, print_max_hw=hw)
@@ -2521,17 +2528,16 @@ class Plot_Window():
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol": param_value_list[3], "beta": param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3],beta=param_value_list[4],ref_solver=None)
             elif self.plot_type_list[i] == "CDF Difference Plot":
+                print("param_value_list CDF Difference Plot", param_value_list)
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_cdf_solvability", plot_CIs=ci, print_max_hw=hw,solve_tol=param_value_list[3], ref_solver=param_value_list[4])
             elif self.plot_type_list[i] == "Quantile Difference Plot":
                 param_list = {"plot CIs":ci, "print max hw":hw, "solve tol":param_value_list[3],"ref solver":param_value_list[5],"beta":param_value_list[4]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", plot_CIs=ci, print_max_hw=hw, solve_tol=param_value_list[3], beta=param_value_list[4],ref_solver=param_value_list[5])
-            elif self.plot_type_list[i] == "Box":
-                param_list = {"normalize":param_value_list[3]}
-                path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "box", normalize = param_value_list[3], all_in_one = plot_together)
-            elif self.plot_type_list[i] == "Violin":
-                param_list = {"all in one" :plot_together,"normalize":param_value_list[3]}
-                path_name = wrapper_base.plot_terminal_progress(exp, plot_type = "violin", normalize = param_value_list[3], all_in_one = plot_together)
+            elif self.plot_type_list[i] == "Box Plot":
+                param_list = {"plot type": param_value_list[3], "normalize":param_value_list[4]}
+                path_name = wrapper_base.plot_terminal_progress(exp, plot_type = param_value_list[3], normalize = param_value_list[4], all_in_one = plot_together)
+
             elif self.plot_type_list[i] == "Terminal Scatter":
                 param_list = {}
                 path_name = wrapper_base.plot_terminal_scatterplots(exp2, plot_type="terminal_scatter", all_in_one = plot_together)
@@ -2641,10 +2647,8 @@ class Plot_Window():
                 param_list = {'solve_tol':0.1, 'ref_solver':None}
             elif plot_choice == "Quantile Difference Plot":
                 param_list = {'solve_tol':0.1, 'beta':0.5, 'ref_solver':None}
-            elif plot_choice == "Box":
-                param_list = {'normalize': True}
-            elif plot_choice == "Violin":
-                param_list = {'normalize':True}
+            elif plot_choice == "Box Plot":
+                param_list = {'plot type': "violin", 'normalize': True}
             elif plot_choice == "Terminal Scatter":
                 param_list = {}
             else:
@@ -2679,10 +2683,11 @@ class Plot_Window():
             self.settings_label_frame.place(relx=.65, rely=.15, relheight=.2, relwidth=.3)
 
             tf_list = ['True','False']
-
+            bp_list = ['violin','box']
             self.solvers_names = []
             for i in self.solver_menu.curselection():
                 self.solvers_names.append(self.solver_menu.get(i))
+
             
             # Plot Settings
             if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice ==  "Solve Time CDF" or plot_choice =="Scatter Plot" or plot_choice == "CDF Solvability" or plot_choice == "Quantile Solvability" or plot_choice == "CDF Difference Plot" or plot_choice == "Quantile Difference Plot":
@@ -2743,6 +2748,11 @@ class Plot_Window():
                     if param_val is not None:
                         entry.delete(0, 'end')
                         entry.insert(index=tk.END, string=param_val)
+                    entry.grid(row=i, column=1, padx=10, pady=3)
+                elif param == 'plot type':
+                    label = tk.Label(master=self.CI_canvas, text="Type of Box Plot", font="Calibri 14", wraplength="200")
+                    entry = ttk.OptionMenu(self.CI_canvas, self.params[i+2], "violin",*bp_list)
+                    label.grid(row=i, column=0, padx=10, pady=3)
                     entry.grid(row=i, column=1, padx=10, pady=3)
                 else:
                     label = tk.Label(master=self.CI_canvas, text=param, font="Calibri 14")
