@@ -3,7 +3,8 @@ Model: <model_name> (<model_abbreviation>)
 
 Description:
 ------------
-<A paragraph describing the stochastic model. Use math if it is helpful.>
+A communication system routes messages that need to go their respective destinations that goes through a network and has an associated cost. This model simulates a network system that routes different messages through the system to try to minimize the total cost.
+
 
 Sample math... :math:`S = 1500`
 
