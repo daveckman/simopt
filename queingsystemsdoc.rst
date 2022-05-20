@@ -5,6 +5,7 @@ Description:
 ------------
 A communication system routes messages that need to go their respective destinations that goes through a network and has an associated cost. This model simulates a network system that routes different messages through the system to try to minimize the total cost.
 
+There are different probabilities and routing percentages that will be represented by P1, P2,... and so on. There is an associated cost per message  that is dependent on the amount of time the message was in the network that will be represented by c1,c2,... and so on.
 
 Sample math... :math:`S = 1500`
 
@@ -16,34 +17,40 @@ Sample math...
 
 Sources of Randomness:
 ----------------------
-<The number and nature of sources of randomness.>
-
+1. A stationary Poisson proccess with rate 1/lambda for message arrivals.
 Model Factors:
 --------------
-* <factor1name>: <short description>
+* i: The measurement of time 
 
-    * Default: <default value>
+   * Default: minutes
+   
+* timecost: The cost of having a message in the network.
 
-* <factor2name>: <short description>
+    * Default: $1 for each i
+    
+* c: Processing cost of each message
 
-    * Default: <default value>
+   * Default: $.005
 
-* <factor3name>: <short description>
+* N: Number of random messages that arrive
 
-    * Default: <default value>
+    * Default: 1000
+
+* n: Numer of networks available to process messages
+
+    * Default: 10
+    
+*Pi: Probability for network i for each i
 
 Responses:
 ---------
-* <response1name>: <short description>
-
-* <response2name>: <short description>
-
-* <response3name>: <short description>
+* optimized_pi: most efficient probability of entering network i 
 
 
 References:
 ===========
-This model is adapted from the article <article name with full citation + hyperlink to journal/arxiv page> 
+Barton, R. R., & Meckesheimer, M. (2006). Metamodel-Based Simulation Optimization.
+S.G. Henderson and B.L. Nelson (Eds.), Handbook in OR & MS, Vol. 13
 
 
 
@@ -53,51 +60,43 @@ Optimization Problem: <problem_name> (<problem_abbrev>)
 
 Decision Variables:
 -------------------
-* <dv1name that matches model factor name>
-* <dv2name that matches model factor name>
+* Pi for each i
 
 Objectives:
 -----------
-<Description using response names. Use math if it is helpful.>
+Minimize total costs of the network system.
 
 Constraints:
 ------------
-<Description using response names. Use math if it is helpful.>
+* Cannot have negative costs
+* Cannot have negative number of messages arrive
 
 Problem Factors:
 ----------------
-* <factor1name>: <short description>
+* working_time: amount of time the network is up and running
 
-  * Default: <default value>
+  * Default: 24 hrs
   
-* <factor2name>: <short description>
-
-  * Default: <default value>
 
 Fixed Model Factors:
 --------------------
-* <factor1name>: <fixed value>
-
-* <factor2name>: <fixed value>
+* N/A
 
 Starting Solution: 
 ------------------
-* <dv1name>: <dv1initialvalue>
-
-* <dv2name>: <dv2initialvalue>
+* original_soln: Pi = 100/(n-i+1) for each i
 
 Random Solutions: 
 ------------------
-<description of how to generate random solutions>
+???
 
 Optimal Solution:
 -----------------
-<if known, otherwise unknown>
+Unknown
 
 Optimal Objective Function Value:
 ---------------------------------
-<if known, otherwise unknown>
-
+Unknown
 
 Optimization Problem: <problem_name> (<problem_abbrev>)
 ========================================================
