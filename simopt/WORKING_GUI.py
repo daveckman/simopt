@@ -350,9 +350,11 @@ class Experiment_Window(tk.Tk):
             label_problem = tk.Label(master=self.factor_tab_one_problem, text=heading, font="Calibri 14 bold")
             label_problem.grid(row=0, column=self.factor_heading_list_problem.index(heading), padx=10, pady=3)
 
-        
-        self.problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
-        
+        if self.problem_var.get() in problem_nonabbreviated_directory:
+            self.problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
+        elif self.problem_var.get() in problem_directory:
+            self.problem_object = problem_directory[self.problem_var.get()]
+
         count_factors_problem = 1
         for num, factor_type in enumerate(self.problem_object().specifications, start=0):
             #(factor_type, len(self.problem_object().specifications[factor_type]['default']) )
@@ -392,7 +394,7 @@ class Experiment_Window(tk.Tk):
 
                 count_factors_problem += 1
 
-
+            
             if self.problem_object().specifications[factor_type].get("datatype") == bool:
 
                 self.boolean_description_problem = tk.Label(master=self.factor_tab_one_problem,
@@ -402,7 +404,7 @@ class Experiment_Window(tk.Tk):
 
                 self.boolean_list_problem = ["True", "False"]
                 self.boolean_var_problem = tk.StringVar(self.factor_tab_one_problem)
-
+                
                 self.boolean_menu_problem = ttk.OptionMenu(self.factor_tab_one_problem, self.boolean_var_problem, str(self.problem_object().specifications[factor_type].get("default")), *self.boolean_list)
 
                 self.boolean_description_problem.grid(row=count_factors_problem, column=0, sticky='nsew')
@@ -417,17 +419,15 @@ class Experiment_Window(tk.Tk):
                 count_factors_problem += 1
 
         count_factors_problem += 1
-        print("Lenght of args",len(args))
-        print("args[0]", args[0])
+        
         if args and len(args) == 2 and args[0] == True:
             oldname = args[1][3][1]
-            print("oldname", oldname)
-            print("args", args)
+            
         else:
             problem_object = problem_nonabbreviated_directory[self.problem_var.get()]
             oldname = problem_object().name
-            print("oldname 2", oldname)
-
+            
+            
         self.save_label_problem = tk.Label(master=self.factor_tab_one_problem,
                                             text = "Save Problem As",
                                             font = "Calibri 13")
@@ -455,8 +455,12 @@ class Experiment_Window(tk.Tk):
 
         ## Rina Adding After this 
         problem = str(self.problem_var.get())  
-        self.oracle = model_unabbreviated_directory[problem] # returns model string
-        self.oracle_object = model_directory[self.oracle]
+        if problem in model_unabbreviated_directory:
+            self.oracle = model_unabbreviated_directory[problem] # returns model string
+            self.oracle_object = model_directory[self.oracle]
+        elif problem in model_directory:
+            self.oracle = model_directory[problem]
+
         ##self.oracle = problem.split("-") 
         ##self.oracle = self.oracle[0] 
         ##self.oracle_object = model_directory[self.oracle] 
@@ -888,11 +892,13 @@ class Experiment_Window(tk.Tk):
         #self.solver_var.set(problem_solver_abbreviated_name_to_unabbreviated(current_experiment_arguments[1], solver_directory, solver_nonabbreviated_directory))'
         
         self.macro_var.set(current_experiment_arguments[2])
+        
+        print("current_experiment_arguments[0]",current_experiment_arguments[0])
         self.show_problem_factors(True, current_experiment_arguments)
-        #print(" self.show_problem_factors", self.show_problem_factors(True, current_experiment_arguments))
+        
         # self.my_experiment[1][3][1]
         self.show_solver_factors(True, current_experiment_arguments)
-        #print("self.show_solver_factors", self. show_solver_factors(True, current_experiment_arguments))
+        
         viewEdit_button_added = self.widget_list[row_index-1][5]
         viewEdit_button_added["text"] = "Save Changes"
         viewEdit_button_added["command"] = partial(self.save_edit_function, row_index)
@@ -965,15 +971,11 @@ class Experiment_Window(tk.Tk):
                 self.macro_reps = self.selected[2]
                 self.solver_name = self.selected[1]
                 self.problem_name = self.selected[0]
-
-                print("Self.problem_name", self.selected[0])
-                print("self.solver_name",self.selected[1] )
                 
                 solver_object,self.solver_name = problem_solver_nonabbreviated_to_object(self.solver_name,solver_nonabbreviated_directory)
                 problem_object, self.problem_name = problem_solver_nonabbreviated_to_object(self.problem_name,problem_nonabbreviated_directory)
-                
-
-                # self.selected[0] = self.problem_name
+            
+                #self.selected[0] = self.problem_name
 
                 self.my_experiment = Experiment(solver_name=self.solver_name, problem_name=self.problem_name, solver_rename=self.solver_rename, problem_rename=self.problem_rename, solver_fixed_factors=self.solver_factors, problem_fixed_factors=self.problem_factors, model_fixed_factors=self.oracle_factors)
                 self.my_experiment.n_macroreps = self.selected[2]
@@ -1435,7 +1437,7 @@ class Experiment_Window(tk.Tk):
             self.post_norm_exp_list.append(exp)
             for i in self.widget_norm_list:
                 if i[0]["text"] != prob_name:
-                    i[2]["state"] = "disable"
+                    i[2]["state"] = "normal"
 
     def crossdesign_function(self):
         # self.crossdesign_window = tk.Tk()
