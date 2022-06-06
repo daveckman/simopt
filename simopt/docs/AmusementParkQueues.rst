@@ -1,4 +1,4 @@
-Model: <Amusement Park Queues> (<PARK-QUEUES>)
+Model: Amusement Park Queues (PARK-QUEUES)
 ==========================================
 
 Description:
