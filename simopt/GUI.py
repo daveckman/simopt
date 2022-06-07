@@ -572,7 +572,12 @@ class Experiment_Window(tk.Tk):
 
     def show_solver_factors(self, *args):
         
-        self.update_problem_list_compatability()
+        if args and len(args) == 3 and args[2] == False:
+            pass
+        else:
+            self.update_problem_list_compatability()
+
+
         self.solver_factors_list = []
         self.solver_factors_types = []
 
@@ -634,7 +639,7 @@ class Experiment_Window(tk.Tk):
                 self.int_float_var = tk.StringVar(self.factor_tab_one_solver)
                 self.int_float_entry = ttk.Entry(master=self.factor_tab_one_solver, textvariable = self.int_float_var, justify = tk.LEFT, width=15)
                 
-                if args and len(args) == 2 and args[0] == True:
+                if args and len(args) == 3 and args[0] == True:
                     self.int_float_entry.insert(index=tk.END, string=str(args[1][5][0][factor_type]))
                 else:
                     self.int_float_entry.insert(index=tk.END, string=str(self.solver_object().specifications[factor_type].get("default")))
@@ -671,7 +676,7 @@ class Experiment_Window(tk.Tk):
 
                # self.boolean_menu = ttk.OptionMenu(self.factor_tab_one_solver, self.boolean_var, str(self.solver_object().specifications[factor_type].get("default")), *self.boolean_list)
 
-                if args and len(args) == 2 and args[0] == True:
+                if args and len(args) == 3 and args[0] == True:
                     self.boolean_menu = ttk.OptionMenu(self.factor_tab_one_solver, self.boolean_var, str(args[1][5][0][factor_type]), *self.boolean_list)
                 else:
                     self.boolean_menu = ttk.OptionMenu(self.factor_tab_one_solver, self.boolean_var, str(self.solver_object().specifications[factor_type].get("default")), *self.boolean_list)
@@ -695,7 +700,7 @@ class Experiment_Window(tk.Tk):
                                             font = "Calibri 13")
 
                                   
-        if args and len(args) == 2 and args[0] == True:
+        if args and len(args) == 3 and args[0] == True:
             oldname = args[1][5][1]
             
         else:
@@ -891,7 +896,7 @@ class Experiment_Window(tk.Tk):
         self.show_problem_factors(True, current_experiment_arguments)
         #print(" self.show_problem_factors", self.show_problem_factors(True, current_experiment_arguments))
         # self.my_experiment[1][3][1]
-        self.show_solver_factors(True, current_experiment_arguments)
+        self.show_solver_factors(True, current_experiment_arguments, False)
         #print("self.show_solver_factors", self. show_solver_factors(True, current_experiment_arguments))
         viewEdit_button_added = self.widget_list[row_index-1][5]
         viewEdit_button_added["text"] = "Save Changes"
@@ -1419,7 +1424,7 @@ class Experiment_Window(tk.Tk):
             self.widget_list[row_index][6]["text"] = "Post-Processing Complete"
             self.widget_list[row_index][6]["state"] = "disabled"
             # self.widget_list[row_index][7]["state"] = "normal"
-
+    
     def checkbox_function2(self, exp, rowNum):
         newlist = sorted(self.experiment_object_list, key=lambda x: x.problem.name)
         prob_name = newlist[rowNum].problem.name

@@ -218,7 +218,7 @@ class Experiment_Window(tk.Tk):
 
         self.tab_one.grid_rowconfigure(0)
 
-        self.heading_list = ["Exp. Num", "Problem", "Solver", "Macroreps", "", "", "", "",""]
+        self.heading_list = ["Check","Exp. Num", "Problem", "Solver", "Macroreps", "", "", "", "",""]
 
         for heading in self.heading_list:
             self.tab_one.grid_columnconfigure(self.heading_list.index(heading))
@@ -247,7 +247,7 @@ class Experiment_Window(tk.Tk):
 
         def on_tab_change(event):
             tab = event.widget.tab('current')['text']
-            if tab == 'Post-Normalize by Problem':
+            if tab == 'Post-Normalize by Problem' or 'Queue of Experiements':
                 self.post_norm_setup()
                 self.post_normal_all_button.place(x=10,rely=.95)
             else:
@@ -310,7 +310,7 @@ class Experiment_Window(tk.Tk):
         # if args and len(args) == 2:
         #     print("ARGS: ", args[1])
         #("arg length:", len(args))
-
+    
         self.problem_factors_list = []
         self.problem_factors_types = []
 
@@ -574,9 +574,14 @@ class Experiment_Window(tk.Tk):
         if str(self.solver_var.get()) != "Solver":
             self.add_button.place(x=10, rely=.48, width=200, height=30)
 
+    
     def show_solver_factors(self, *args):
         
-        self.update_problem_list_compatability()
+        if args and len(args) == 3 and args[2] == False:
+            pass
+        else:
+            self.update_problem_list_compatability()
+
         self.solver_factors_list = []
         self.solver_factors_types = []
 
@@ -638,7 +643,7 @@ class Experiment_Window(tk.Tk):
                 self.int_float_var = tk.StringVar(self.factor_tab_one_solver)
                 self.int_float_entry = ttk.Entry(master=self.factor_tab_one_solver, textvariable = self.int_float_var, justify = tk.LEFT, width=15)
                 
-                if args and len(args) == 2 and args[0] == True:
+                if args and len(args) == 3 and args[0] == True:
                     self.int_float_entry.insert(index=tk.END, string=str(args[1][5][0][factor_type]))
                 else:
                     self.int_float_entry.insert(index=tk.END, string=str(self.solver_object().specifications[factor_type].get("default")))
@@ -675,7 +680,7 @@ class Experiment_Window(tk.Tk):
 
                # self.boolean_menu = ttk.OptionMenu(self.factor_tab_one_solver, self.boolean_var, str(self.solver_object().specifications[factor_type].get("default")), *self.boolean_list)
 
-                if args and len(args) == 2 and args[0] == True:
+                if args and len(args) == 3 and args[0] == True:
                     self.boolean_menu = ttk.OptionMenu(self.factor_tab_one_solver, self.boolean_var, str(args[1][5][0][factor_type]), *self.boolean_list)
                 else:
                     self.boolean_menu = ttk.OptionMenu(self.factor_tab_one_solver, self.boolean_var, str(self.solver_object().specifications[factor_type].get("default")), *self.boolean_list)
@@ -699,7 +704,7 @@ class Experiment_Window(tk.Tk):
                                             font = "Calibri 13")
 
                                   
-        if args and len(args) == 2 and args[0] == True:
+        if args and len(args) == 3 and args[0] == True:
             oldname = args[1][5][1]
             
         else:
@@ -897,7 +902,7 @@ class Experiment_Window(tk.Tk):
         self.show_problem_factors(True, current_experiment_arguments)
         
         # self.my_experiment[1][3][1]
-        self.show_solver_factors(True, current_experiment_arguments)
+        self.show_solver_factors(True, current_experiment_arguments, False)
         
         viewEdit_button_added = self.widget_list[row_index-1][5]
         viewEdit_button_added["text"] = "Save Changes"
@@ -1002,48 +1007,50 @@ class Experiment_Window(tk.Tk):
                                                     text=self.selected[3][1],
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.problem_added.grid(row=self.count_experiment_queue, column=1, sticky='nsew', padx=10, pady=3)
-
+                    self.problem_added.grid(row=self.count_experiment_queue, column=2, sticky='nsew', padx=10, pady=3)
+                    self.checkbox_select = tk.Checkbutton(master=self.tab_one,text="",onvalue = "True", offvalue = "False",state = "disabled")
+                    self.checkbox_select.deselect()
+                    self.checkbox_select.grid(row=self.count_experiment_queue, column=0, sticky='nsew', padx=10, pady=3)
                     self.exp_num = tk.Label(master=self.tab_one,
                                                     text = str(self.count_experiment_queue),
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.exp_num.grid(row=self.count_experiment_queue, column=0, sticky='nsew', padx=10, pady=3)
+                    self.exp_num.grid(row=self.count_experiment_queue, column=1, sticky='nsew', padx=10, pady=3)
 
                     self.solver_added = tk.Label(master=self.tab_one,
                                                     text=self.selected[5][1],
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.solver_added.grid(row=self.count_experiment_queue, column=2, sticky='nsew', padx=10, pady=3)
+                    self.solver_added.grid(row=self.count_experiment_queue, column=3, sticky='nsew', padx=10, pady=3)
 
                     self.macros_added = tk.Label(master=self.tab_one,
                                                     text=self.selected[2],
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.macros_added.grid(row=self.count_experiment_queue, column=3, sticky='nsew', padx=10, pady=3)
+                    self.macros_added.grid(row=self.count_experiment_queue, column=4, sticky='nsew', padx=10, pady=3)
 
                     self.run_button_added = ttk.Button(master=self.tab_one,
                                                         text="Run" ,
                                                         command= partial(self.run_row_function, self.count_experiment_queue))
-                    self.run_button_added.grid(row=self.count_experiment_queue, column=4, sticky='nsew', padx=10, pady=3)
+                    self.run_button_added.grid(row=self.count_experiment_queue, column=5, sticky='nsew', padx=10, pady=3)
 
                     self.viewEdit_button_added = ttk.Button(master=self.tab_one,
                                                         text="View / Edit" ,
                                                         command= partial(self.viewEdit_function, self.count_experiment_queue))
-                    self.viewEdit_button_added.grid(row=self.count_experiment_queue, column=5, sticky='nsew', padx=10, pady=3)
+                    self.viewEdit_button_added.grid(row=self.count_experiment_queue, column=6, sticky='nsew', padx=10, pady=3)
 
                     self.clear_button_added = ttk.Button(master=self.tab_one,
                                                         text="Remove" ,
                                                         command= partial(self.clearRow_function, self.count_experiment_queue))
-                    self.clear_button_added.grid(row=self.count_experiment_queue, column=6, sticky='nsew', padx=10, pady=3)
+                    self.clear_button_added.grid(row=self.count_experiment_queue, column=7, sticky='nsew', padx=10, pady=3)
 
                     self.postprocess_button_added = ttk.Button(master=self.tab_one,
                                                         text="Post-Process",
                                                         command= partial(self.post_rep_function, self.count_experiment_queue),
                                                         state = "disabled")
-                    self.postprocess_button_added.grid(row=self.count_experiment_queue, column=7, sticky='nsew', padx=10, pady=3)
+                    self.postprocess_button_added.grid(row=self.count_experiment_queue, column=8, sticky='nsew', padx=10, pady=3)
 
-                    self.widget_row = [self.problem_added, self.solver_added, self.macros_added, self.run_button_added, self.viewEdit_button_added, self.clear_button_added, self.postprocess_button_added, self.exp_num]
+                    self.widget_row = [self.problem_added, self.solver_added, self.macros_added, self.run_button_added, self.viewEdit_button_added, self.clear_button_added, self.postprocess_button_added, self.exp_num,self.checkbox_select]
                     self.widget_list.insert(place,self.widget_row)
 
                     separator = ttk.Separator(master=self.tab_one, orient='horizontal')
@@ -1287,53 +1294,58 @@ class Experiment_Window(tk.Tk):
                     self.experiment_master_list.insert(place,None)
 
                     self.rows = 5
+
+                    self.checkbox_select = tk.Checkbutton(master=self.tab_one,text="",onvalue = "True", offvalue = "False", state = "disabled")
+                    self.checkbox_select.deselect()
+                    self.checkbox_select.grid(row=self.count_experiment_queue, column=0, sticky='nsew', padx=10, pady=3)
+                    
                     self.exp_num = tk.Label(master=self.tab_one,
                                                     text=str(self.count_experiment_queue),
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.exp_num.grid(row=self.count_experiment_queue, column=0, sticky='nsew', padx=10, pady=3)
+                    self.exp_num.grid(row=self.count_experiment_queue, column=1, sticky='nsew', padx=10, pady=3)
 
                     self.problem_added = tk.Label(master=self.tab_one,
                                                     text=self.my_experiment.problem.name,
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.problem_added.grid(row=self.count_experiment_queue, column=1, sticky='nsew', padx=10, pady=3)
+                    self.problem_added.grid(row=self.count_experiment_queue, column=2, sticky='nsew', padx=10, pady=3)
 
                     self.solver_added = tk.Label(master=self.tab_one,
                                                     text=self.my_experiment.solver.name,
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.solver_added.grid(row=self.count_experiment_queue, column=2, sticky='nsew', padx=10, pady=3)
+                    self.solver_added.grid(row=self.count_experiment_queue, column=3, sticky='nsew', padx=10, pady=3)
 
                     self.macros_added = tk.Label(master=self.tab_one,
                                                     text=self.my_experiment.n_macroreps,
                                                     font = "Calibri 12",
                                                     justify="center")
-                    self.macros_added.grid(row=self.count_experiment_queue, column=3, sticky='nsew', padx=10, pady=3)
+                    self.macros_added.grid(row=self.count_experiment_queue, column=4, sticky='nsew', padx=10, pady=3)
 
                     self.run_button_added = ttk.Button(master=self.tab_one,
                                                         text="Run",
                                                         command= partial(self.run_row_function, self.count_experiment_queue))
-                    self.run_button_added.grid(row=self.count_experiment_queue, column=4, sticky='nsew', padx=10, pady=3)
+                    self.run_button_added.grid(row=self.count_experiment_queue, column=5, sticky='nsew', padx=10, pady=3)
 
                     self.viewEdit_button_added = ttk.Button(master=self.tab_one,
                                                         text="View / Edit" ,
                                                         command= partial(self.viewEdit_function, self.count_experiment_queue))
-                    self.viewEdit_button_added.grid(row=self.count_experiment_queue, column=5, sticky='nsew', padx=10, pady=3)
+                    self.viewEdit_button_added.grid(row=self.count_experiment_queue, column=6, sticky='nsew', padx=10, pady=3)
 
                     self.clear_button_added = ttk.Button(master=self.tab_one,
                                                         text="Remove  " ,
                                                         command= partial(self.clearRow_function, self.count_experiment_queue))
-                    self.clear_button_added.grid(row=self.count_experiment_queue, column=6, sticky='nsew', padx=10, pady=3)
+                    self.clear_button_added.grid(row=self.count_experiment_queue, column=7, sticky='nsew', padx=10, pady=3)
 
                     self.postprocess_button_added = ttk.Button(master=self.tab_one,
                                                         text="Post-Process",
                                                         command= partial(self.post_rep_function, self.count_experiment_queue),
                                                         state = "disabled")
-                    self.postprocess_button_added.grid(row=self.count_experiment_queue, column=7, sticky='nsew', padx=10, pady=3)
+                    self.postprocess_button_added.grid(row=self.count_experiment_queue, column=8, sticky='nsew', padx=10, pady=3)
 
 
-                    self.widget_row = [self.problem_added, self.solver_added, self.macros_added, self.run_button_added, self.viewEdit_button_added, self.clear_button_added, self.postprocess_button_added, self.exp_num]
+                    self.widget_row = [self.problem_added, self.solver_added, self.macros_added, self.run_button_added, self.viewEdit_button_added, self.clear_button_added, self.postprocess_button_added, self.exp_num, self.checkbox_select]
                     self.widget_list.insert(place,self.widget_row)
 
                     row_of_widgets = self.widget_list[len(self.widget_list) - 1]
@@ -1344,6 +1356,8 @@ class Experiment_Window(tk.Tk):
                         run_button = row_of_widgets[4]
                         run_button["state"] = "disabled"
                         run_button = row_of_widgets[6]
+                        run_button["state"] = "normal"
+                        run_button = row_of_widgets[8]
                         run_button["state"] = "normal"
                         self.my_experiment.post_norm_ready = False
                         if self.my_experiment.check_postreplicate():
@@ -1421,6 +1435,7 @@ class Experiment_Window(tk.Tk):
             self.widget_list[row_index][6]["text"] = "Post-Processing Complete"
             self.widget_list[row_index][6]["state"] = "disabled"
             # self.widget_list[row_index][7]["state"] = "normal"
+    
 
     def checkbox_function2(self, exp, rowNum):
         newlist = sorted(self.experiment_object_list, key=lambda x: x.problem.name)
@@ -1436,6 +1451,7 @@ class Experiment_Window(tk.Tk):
             self.normalize_list2.append(rowNum)
             self.post_norm_exp_list.append(exp)
             for i in self.widget_norm_list:
+
                 if i[0]["text"] != prob_name:
                     i[2]["state"] = "normal"
 
