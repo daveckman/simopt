@@ -1254,6 +1254,7 @@ def plot_progress_curves(experiments, plot_type, beta=0.50, normalize=True, all_
     file_list = []
     # Set up plot.
     n_experiments = len(experiments)
+    print("all_in_one", all_in_one)
     if all_in_one:
         ref_experiment = experiments[0]
         setup_plot(plot_type=plot_type,

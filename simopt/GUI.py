@@ -2477,6 +2477,7 @@ class Plot_Window():
             param_value_list = []
             for t in self.params:
                 #(t.get())
+                print(t.get())
                 if t.get() == True:
                     param_value_list.append(True)
                 elif t.get() == False:
@@ -2519,8 +2520,10 @@ class Plot_Window():
 
 
             if self.plot_type_list[i] == "Mean Progress Curve":
+                print("all_in_one GUI", param_value_list[1])
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type="mean", normalize=param_value_list[3], all_in_one=param_value_list[1], plot_CIs=param_value_list[0], print_max_hw=param_value_list[2])
                 print("param_value_list Mean progress Curve ", param_value_list)
+                print("path_name",path_name)
                 param_list = {"plot CIs":param_value_list[0], "print max hw":param_value_list[2], "normalize":param_value_list[3]}
             elif self.plot_type_list[i] == "Quantile Progress Curve":
                 path_name = wrapper_base.plot_progress_curves(exp,plot_type = "quantile",  beta=param_value_list[3], normalize=param_value_list[4], all_in_one=param_value_list[1],plot_CIs=param_value_list[0], print_max_hw=param_value_list[2])
@@ -2553,6 +2556,7 @@ class Plot_Window():
                 path_name = wrapper_base.plot_terminal_scatterplots(exp2, plot_type="terminal_scatter", all_in_one = param_value_list[0])
             else:
                 print(f"{self.plot_type_list[i]} is the plot_type_list at index {i}")
+
 
 
             for i,new_plot in enumerate(path_name):
