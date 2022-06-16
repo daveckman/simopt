@@ -815,14 +815,16 @@ class Experiment_Window(tk.Tk):
 
             row_of_widgets[6] = postprocess_button_added
 
-            row_of_widgets[7].grid(row= (row_index+1), column=0, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[0].grid(row= (row_index+1), column=1, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[1].grid(row= (row_index+1), column=2, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[2].grid(row= (row_index+1), column=3, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[3].grid(row= (row_index+1), column=4, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[4].grid(row= (row_index+1), column=5, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[5].grid(row= (row_index+1), column=6, sticky='nsew', padx=10, pady=3)
-            row_of_widgets[6].grid(row= (row_index+1), column=7, sticky='nsew', padx=10, pady=3)
+            
+            row_of_widgets[8].grid(row= (row_index+1), column=0, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[7].grid(row= (row_index+1), column=1, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[0].grid(row= (row_index+1), column=2, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[1].grid(row= (row_index+1), column=3, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[2].grid(row= (row_index+1), column=4, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[3].grid(row= (row_index+1), column=5, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[4].grid(row= (row_index+1), column=6, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[5].grid(row= (row_index+1), column=7, sticky='nsew', padx=10, pady=3)
+            row_of_widgets[6].grid(row= (row_index+1), column=8, sticky='nsew', padx=10, pady=3)
 
         self.count_experiment_queue = len(self.widget_list) + 1
 
@@ -1008,9 +1010,11 @@ class Experiment_Window(tk.Tk):
                                                     font = "Calibri 12",
                                                     justify="center")
                     self.problem_added.grid(row=self.count_experiment_queue, column=2, sticky='nsew', padx=10, pady=3)
-                    self.checkbox_select = tk.Checkbutton(master=self.tab_one,text="",onvalue = "True", offvalue = "False",state = "disabled")
+                    
+                    self.checkbox_select = tk.Checkbutton(master=self.tab_one,text="", onvalue = True, offvalue= False, state = "normal")
                     self.checkbox_select.deselect()
                     self.checkbox_select.grid(row=self.count_experiment_queue, column=0, sticky='nsew', padx=10, pady=3)
+                    
                     self.exp_num = tk.Label(master=self.tab_one,
                                                     text = str(self.count_experiment_queue),
                                                     font = "Calibri 12",
@@ -1294,8 +1298,12 @@ class Experiment_Window(tk.Tk):
                     self.experiment_master_list.insert(place,None)
 
                     self.rows = 5
-
-                    self.checkbox_select = tk.Checkbutton(master=self.tab_one,text="",onvalue = "True", offvalue = "False", state = "disabled")
+                    
+                    # self.select_checkbox = tk.Checkbutton(self.tab_one,text="",state="disabled",command=partial(self.
+                    # checkbox_function, self.count_experiment_queue - 1))
+        # self.select_checkbox.grid(row=self.count_experiment_queue, column=7, sticky='nsew', padx=10, pady=3)
+                    
+                    self.checkbox_select = tk.Checkbutton(master=self.tab_one,text="", onvalue = True, offvalue= False, state = "normal")
                     self.checkbox_select.deselect()
                     self.checkbox_select.grid(row=self.count_experiment_queue, column=0, sticky='nsew', padx=10, pady=3)
                     
@@ -1359,6 +1367,7 @@ class Experiment_Window(tk.Tk):
                         run_button["state"] = "normal"
                         run_button = row_of_widgets[8]
                         run_button["state"] = "normal"
+
                         self.my_experiment.post_norm_ready = False
                         if self.my_experiment.check_postreplicate():
                             self.experiment_object_list[place].post_norm_ready = True
@@ -1390,6 +1399,7 @@ class Experiment_Window(tk.Tk):
         self.widget_list[row_index][3]["text"] = "Run Complete"
         self.widget_list[row_index][4]["state"] = "disabled"
         self.widget_list[row_index][6]["state"] = "normal"
+        self.widget_list[row_index][8]["state"] = "normal"
         # run_button["state"] = "disabled"
         # run_button = row_of_widgets[4]
         # run_button["state"] = "disabled"
@@ -1453,7 +1463,7 @@ class Experiment_Window(tk.Tk):
             for i in self.widget_norm_list:
 
                 if i[0]["text"] != prob_name:
-                    i[2]["state"] = "normal"
+                    i[2]["state"] = "disabled"
 
     def crossdesign_function(self):
         # self.crossdesign_window = tk.Tk()
