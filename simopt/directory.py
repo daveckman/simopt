@@ -7,8 +7,11 @@ Provide dictionary directories listing solvers, problems, and models.
 Listing
 -------
 solver_directory : dictionary
+solver_nonabbreviated_directory : dictionary
 problem_directory : dictionary
+problem_nonabbreviated_directory : dictionary
 model_directory : dictionary
+model_unabbreviated_directory : dictionary
 """
 # import solvers
 from solvers.astrodf import ASTRODF
@@ -112,4 +115,3 @@ model_unabbreviated_directory = {
     "Max Revenue for Restaurant Table Allocation (SDDN)": "TABLEALLOCATION",
     "Max Log Likelihood for Gamma Parameter Estimation (SBCG)": "PARAMESTI"
 }
-
