@@ -1477,7 +1477,7 @@ class Experiment_Window(tk.Tk):
         self.clear_button_added.grid(row=row_num, column=4, sticky='nsew', padx=10, pady=3)
 
         self.postprocess_button_added = ttk.Button(master=self.tab_two,
-                                            text="Post-Process",
+                                            text="Post-Process and Post-Normalize",
                                             command = partial(self.post_rep_meta_function,row_num),
                                             state = "disabled")
         self.postprocess_button_added.grid(row=row_num, column=5, sticky='nsew', padx=10, pady=3)
