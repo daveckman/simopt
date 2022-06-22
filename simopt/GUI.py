@@ -2232,7 +2232,7 @@ class Plot_Window():
             self.experiment_list = experiment_list
             self.main_window = main_window
             self.plot_types_inputs = ["cdf_solvability", "quantile_solvability","diff_cdf_solvability","diff_quantile_solvability"]
-            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot", "Terminal Scatter Plot", "Terminal Scatter Area"]
+            self.plot_type_names = ["Mean Progress Curve", "Quantile Progress Curve", "Solve Time CDF", "Scatter Plot", "CDF Solvability","Quantile Solvability","CDF Difference Plot", "Quantile Difference Plot", "Terminal Progress Plot", "Area Scatter Plot"]
             self.num_plots = 0
             self.plot_exp_list = []
             self.plot_type_list = []
@@ -2548,10 +2548,10 @@ class Plot_Window():
             elif self.plot_type_list[i] == "Quantile Difference Plot":
                 param_list = {"plot CIs":param_value_list[0], "print max hw":param_value_list[1], "solve tol":param_value_list[2],"ref solver":param_value_list[4],"beta":param_value_list[3]}
                 path_name = wrapper_base.plot_solvability_profiles(exp2, plot_type = "diff_quantile_solvability", plot_CIs=param_value_list[0], print_max_hw=param_value_list[1], solve_tol=param_value_list[2], beta=param_value_list[3],ref_solver=param_value_list[4])
-            elif self.plot_type_list[i] == "Terminal Scatter Plot":
+            elif self.plot_type_list[i] == "Terminal Progress Plot":
                 param_list = {"plot type": param_value_list[1], "normalize":param_value_list[2]}
                 path_name = wrapper_base.plot_terminal_progress(exp, plot_type = param_value_list[1], normalize = param_value_list[2], all_in_one =param_value_list[0])
-            elif self.plot_type_list[i] == "Terminal Scatter Area":
+            elif self.plot_type_list[i] == "Area Scatter Plot":
                 param_list = {}
                 path_name = wrapper_base.plot_terminal_scatterplots(exp2, plot_type="terminal_scatter", all_in_one = param_value_list[0])
             else:
@@ -2661,9 +2661,9 @@ class Plot_Window():
                 param_list = {'solve_tol':0.1, 'ref_solver':None}
             elif plot_choice == "Quantile Difference Plot":
                 param_list = {'solve_tol':0.1, 'beta':0.5, 'ref_solver':None}
-            elif plot_choice == "Terminal Scatter Plot":
+            elif plot_choice == "Terminal Progress Plot":
                 param_list = {'plot type': "violin", 'normalize': True}
-            elif plot_choice == "Terminal Scatter Area":
+            elif plot_choice == "Area Scatter Plot":
                 param_list = {}
             else:
                 print("invalid plot?")
@@ -2715,7 +2715,7 @@ class Plot_Window():
                 entry1.grid(row=0, column=1, padx=10, pady=3)
                 i += 1
 
-            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice == "Terminal Scatter Plot" or plot_choice == "Terminal Scatter Area":
+            if plot_choice == "Mean Progress Curve" or plot_choice == "Quantile Progress Curve" or plot_choice == "Terminal Progress Plot" or plot_choice == "Area Scatter Plot":
                 # Plot Together Checkbox
                 entry = tk.Checkbutton(self.settings_canvas, variable=self.params[i], onvalue="True", offvalue="False")
                 entry.select()
@@ -2768,7 +2768,7 @@ class Plot_Window():
                         entry.insert(index=tk.END, string=param_val)
                     entry.grid(row=i, column=1, padx=10, pady=3)
                 elif param == 'plot type':
-                    label = tk.Label(master=self.CI_canvas, text="Type of Terminal Scatter Plot", font="Calibri 14", wraplength="200")
+                    label = tk.Label(master=self.CI_canvas, text="Type of Terminal Progress Plot", font="Calibri 14", wraplength="200")
                     entry = ttk.OptionMenu(self.CI_canvas, self.params[i], "violin",*bp_list)
                     label.grid(row=i, column=0, padx=10, pady=3)
                     entry.grid(row=i, column=1, padx=10, pady=3)
