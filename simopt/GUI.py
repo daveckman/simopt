@@ -178,6 +178,12 @@ class Experiment_Window(tk.Tk):
                                                 state = "normal",
                                                 command = self.post_normal_all_function)
 
+        self.make_meta_experiment = ttk.Button(master=self.master,
+                                                text = "Create Meta Experiment from Selected",
+                                                width = 30,
+                                                state = "normal")
+                                                #,command = self.post_normal_all_function) add in with new function
+                
         self.pickle_file_pathname_label = tk.Label(master=self.master,
                                                     text = "File Selected:",
                                                     font = "Calibri 13")
@@ -252,6 +258,11 @@ class Experiment_Window(tk.Tk):
                 self.post_normal_all_button.place(x=10,rely=.95)
             else:
                 self.post_normal_all_button.place_forget()
+            if tab == 'Queue of Experiments':
+                self.make_meta_experiment.place(x=10,rely=.95)
+            else:
+                self.make_meta_experiment.place_forget()
+
 
 
         self.notebook.bind('<<NotebookTabChanged>>', on_tab_change)
