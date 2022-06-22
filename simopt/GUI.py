@@ -181,8 +181,8 @@ class Experiment_Window(tk.Tk):
         self.make_meta_experiment = ttk.Button(master=self.master,
                                                 text = "Create Meta Experiment from Selected",
                                                 width = 30,
-                                                state = "normal")
-                                                #,command = self.post_normal_all_function) add in with new function
+                                                state = "normal",
+                                                command = self.make_meta_experiment_func) 
                 
         self.pickle_file_pathname_label = tk.Label(master=self.master,
                                                     text = "File Selected:",
@@ -1629,6 +1629,11 @@ class Experiment_Window(tk.Tk):
     def post_norm_return_func(self):
         #('IN post_process_disable_button ', self.post_rep_function_row_index)
         print("youve returned")
+    
+    def make_meta_experiment_func(self):
+        message2 = "There are experiments missing, would you like to add them?"
+        response = tk.messagebox.askyesno(title = "Make meta Experiemnts",message = message2)
+           
 
 class Cross_Design_Window():
     def __init__(self, master, main_widow):
