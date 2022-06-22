@@ -2350,7 +2350,7 @@ class Plot_Window():
 
             self.tab_one.grid_rowconfigure(0)
 
-            self.heading_list = ["Problem", "Solver", "Plot Type", "Clear Row", "View Plot", "Parameters", "PNG File Path"]
+            self.heading_list = ["Problem", "Solver", "Plot Type", "Remove Row", "View Plot", "Parameters", "PNG File Path"]
 
             for heading in self.heading_list:
                 self.tab_one.grid_columnconfigure(self.heading_list.index(heading))
@@ -2597,7 +2597,7 @@ class Plot_Window():
 
 
                 self.clear_plot = tk.Button(master=self.tab_one,
-                                                        text="Clear",
+                                                        text="Remove",
                                                         font = "Calibri 12",
                                                         justify="center",
                                                         command=partial(self.clear_row, place-1))
