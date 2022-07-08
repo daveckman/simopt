@@ -2,6 +2,8 @@
 Summary
 -------
 Simulate contamination rates.
+A detailed description of the model/problem can be found
+`here <https://simopt.readthedocs.io/en/latest/contam.html>`_.
 """
 import numpy as np
 
@@ -39,7 +41,9 @@ class Contamination(Model):
     --------
     base.Model
     """
-    def __init__(self, fixed_factors={}):
+    def __init__(self, fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
         self.name = "CONTAM"
         self.n_rngs = 2
         self.n_responses = 1
@@ -241,7 +245,11 @@ class ContaminationTotalCostDisc(Problem):
     --------
     base.Problem
     """
-    def __init__(self, name="CONTAM-1", fixed_factors={}, model_fixed_factors={}):
+    def __init__(self, name="CONTAM-1", fixed_factors=None, model_fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
+        if model_fixed_factors is None:
+            model_fixed_factors = {}
         self.name = name
         self.n_objectives = 1
         self.minmax = (-1,)
@@ -265,17 +273,17 @@ class ContaminationTotalCostDisc(Problem):
                 "default": 10000
             },
             "prev_cost": {
-                "description": "Cost of prevention.",
+                "description": "Cost of prevention in each stage.",
                 "datatype": list,
                 "default": [1, 1, 1, 1, 1]
             },
             "error_prob": {
-                "description": "Error probability.",
+                "description": "Allowable error probability in each stage.",
                 "datatype": list,
                 "default": [0.2, 0.2, 0.2, 0.2, 0.2]
             },
             "upper_thres": {
-                "description": "Upper limit of amount of contamination.",
+                "description": "Upper limit of amount of contamination in each stage.",
                 "datatype": list,
                 "default": [0.1, 0.1, 0.1, 0.1, 0.1]
             }
@@ -528,7 +536,11 @@ class ContaminationTotalCostCont(Problem):
     --------
     base.Problem
     """
-    def __init__(self, name="CONTAM-2", fixed_factors={}, model_fixed_factors={}):
+    def __init__(self, name="CONTAM-2", fixed_factors=None, model_fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
+        if model_fixed_factors is None:
+            model_fixed_factors = {}
         self.name = name
         self.n_objectives = 1
         self.minmax = (-1,)

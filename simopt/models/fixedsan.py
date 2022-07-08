@@ -1,20 +1,20 @@
 """
 Summary
 -------
-Simulate a day's worth of sales for a newsvendor under dynamic consumer substitution.
+Simulate duration of a stochastic activity network (SAN).
 A detailed description of the model/problem can be found
-`here <https://simopt.readthedocs.io/en/latest/dynamnews.html>`_.
+`here <https://simopt.readthedocs.io/en/latest/san.html>`_.
 """
 import numpy as np
 
 from base import Model, Problem
 
 
-class DynamNews(Model):
+class FixedSAN(Model):
     """
-    A model that simulates a day's worth of sales for a newsvendor
-    with dynamic consumer substitution. Returns the profit and the
-    number of products that stock out.
+    A model that simulates a stochastic activity network problem with tasks
+    that have exponentially distributed durations, and the selected means
+    come with a cost.
 
     Attributes
     ----------
@@ -27,14 +27,14 @@ class DynamNews(Model):
     factors : dict
         changeable factors of the simulation model
     specifications : dict
-        details of each factor (for GUI, data validation, and defaults)
+        details of each factor (for GUI and data validation)
     check_factor_list : dict
         switch case for checking factor simulatability
 
     Arguments
     ---------
-    fixed_factors : dict
-        fixed_factors of the simulation model
+    fixed_factors : nested dict
+        fixed factors of the simulation model
 
     See also
     --------
@@ -43,82 +43,45 @@ class DynamNews(Model):
     def __init__(self, fixed_factors=None):
         if fixed_factors is None:
             fixed_factors = {}
-        self.name = "DYNAMNEWS"
+        self.name = "FIXEDSAN"
         self.n_rngs = 1
-        self.n_responses = 2
-        self.factors = fixed_factors
+        self.n_responses = 1
         self.specifications = {
-            "num_prod": {
-                "description": "Number of Products",
+            "num_arcs": {
+                "description": "Number of arcs.",
                 "datatype": int,
-                "default": 2
+                "default": 13
             },
-            "num_customer": {
-                "description": "Number of Customers",
+            "num_nodes": {
+                "description": "Number of nodes.",
                 "datatype": int,
-                "default": 5
+                "default": 9
             },
-            "c_utility": {
-                "description": "Constant of each product's utility",
-                "datatype": list,
-                "default": [1.0, 1.0]
-            },
-            "mu": {
-                "description": "Mu for calculating Gumbel random variable",
-                "datatype": float,
-                "default": 1.0
-            },
-            "init_level": {
-                "description": "Initial inventory level",
-                "datatype": list,
-                "default": [2, 3]
-            },
-            "price": {
-                "description": "Sell price of products",
-                "datatype": list,
-                "default": [9, 9]
-            },
-            "cost": {
-                "description": "Cost of products",
-                "datatype": list,
-                "default": [5, 5]
+            "arc_means": {
+                "description": "Mean task durations for each arc.",
+                "datatype": tuple,
+                "default": (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
             }
         }
         self.check_factor_list = {
-            "num_prod": self.check_num_prod,
-            "num_customer": self.check_num_customer,
-            "c_utility": self.check_c_utility,
-            "mu": self.check_mu,
-            "init_level": self.check_init_level,
-            "price": self.check_price,
-            "cost": self.check_cost
+            "num_arcs": self.check_num_arcs,
+            "num_nodes": self.check_num_nodes,
+            "arc_means": self.check_arc_means
         }
         # Set factors of the simulation model.
         super().__init__(fixed_factors)
 
-    def check_num_prod(self):
-        return self.factors["num_prod"] > 0
+    def check_num_arcs(self):
+        return self.factors["num_arcs"] > 0
 
-    def check_num_customer(self):
-        return self.factors["num_customer"] > 0
+    def check_num_nodes(self):
+        return self.factors["num_nodes"] > 0
 
-    def check_c_utility(self):
-        return len(self.factors["c_utility"]) == self.factors["num_prod"]
-
-    def check_init_level(self):
-        return all(np.array(self.factors["init_level"]) >= 0) & (len(self.factors["init_level"]) == self.factors["num_prod"])
-
-    def check_mu(self):
-        return True
-
-    def check_price(self):
-        return all(np.array(self.factors["price"]) >= 0) & (len(self.factors["price"]) == self.factors["num_prod"])
-
-    def check_cost(self):
-        return all(np.array(self.factors["cost"]) >= 0) & (len(self.factors["cost"]) == self.factors["num_prod"])
-
-    def check_simulatable_factors(self):
-        return all(np.subtract(self.factors["price"], self.factors["cost"]) >= 0)
+    def check_arc_means(self):
+        positive = True
+        for x in list(self.factors["arc_means"]):
+            positive = positive & x > 0
+        return (len(self.factors["arc_means"]) != self.factors["num_arcs"]) & positive
 
     def replicate(self, rng_list):
         """
@@ -133,64 +96,95 @@ class DynamNews(Model):
         -------
         responses : dict
             performance measures of interest
-            "profit" = profit in this scenario
-            "n_prod_stockout" = number of products which are out of stock
+            "longest_path_length" = length/duration of longest path
+        gradients : dict of dicts
+            gradient estimates for each response
         """
-        # Designate random number generator for generating a Gumbel random variable.
-        Gumbel_rng = rng_list[0]
-        # Compute Gumbel rvs for the utility of the products.
-        gumbel = np.zeros(((self.factors["num_customer"], self.factors["num_prod"])))
-        for t in range(self.factors["num_customer"]):
-            for j in range(self.factors["num_prod"]):
-                gumbel[t][j] = Gumbel_rng.gumbelvariate(-self.factors["mu"] * np.euler_gamma, self.factors["mu"])
-        # Compute utility for each product and each customer.
-        utility = np.zeros((self.factors["num_customer"], self.factors["num_prod"] + 1))
-        for t in range(self.factors["num_customer"]):
-            for j in range(self.factors["num_prod"] + 1):
-                if j == 0:
-                    utility[t][j] = 0
-                else:
-                    utility[t][j] = self.factors["c_utility"][j - 1] + gumbel[t][j - 1]
+        # Designate separate random number generators.
+        exp_rng = rng_list[0]
 
-        # Initialize inventory.
-        inventory = np.copy(self.factors["init_level"])
-        itembought = np.zeros(self.factors["num_customer"])
+        # Generate arc lengths.
+        T = np.zeros(self.factors["num_nodes"])
+        Tderiv = np.zeros((self.factors["num_nodes"], self.factors["num_arcs"]))
+        thetas = list(self.factors["arc_means"])
+        arcs = [exp_rng.expovariate(1 / x) for x in thetas]
 
-        # Loop through customers
-        for t in range(self.factors["num_customer"]):
-            instock = np.where(inventory > 0)[0]
-            # Initialize the purchase option to be no-purchase.
-            itembought[t] = 0
-            # Assign the purchase option to be the product that maximizes the utility.
-            for j in instock:
-                if utility[t][j + 1] > utility[t][int(itembought[t])]:
-                    itembought[t] = j + 1
-            if itembought[t] != 0:
-                inventory[int(itembought[t] - 1)] -= 1
+        # Brute force calculation like in Matlab code
+        T[1] = T[0] + arcs[0]
+        Tderiv[1, :] = Tderiv[0, :]
+        Tderiv[1, 0] = Tderiv[1, 0] + arcs[0] / thetas[0]
 
-        # Calculate profit.
-        numsold = self.factors["init_level"] - inventory
-        revenue = numsold * np.array(self.factors["price"])
-        cost = self.factors["init_level"] * np.array(self.factors["cost"])
-        profit = revenue - cost
+        T[2] = max(T[0] + arcs[1], T[1] + arcs[2])
+        if T[0] + arcs[1] > T[1] + arcs[2]:
+            T[2] = T[0] + arcs[1]
+            Tderiv[2, :] = Tderiv[0, :]
+            Tderiv[2, 1] = Tderiv[2, 1] + arcs[1] / thetas[1]
+        else:
+            T[2] = T[1] + arcs[2]
+            Tderiv[2, :] = Tderiv[1, :]
+            Tderiv[2, 2] = Tderiv[2, 2] + arcs[2] / thetas[2]
+
+        T[3] = T[1] + arcs[3]
+        Tderiv[3, :] = Tderiv[1, :]
+        Tderiv[3, 3] = Tderiv[3, 3] + arcs[3] / thetas[3]
+
+        T[4] = T[3] + arcs[6]
+        Tderiv[4, :] = Tderiv[3, :]
+        Tderiv[4, 6] = Tderiv[4, 6] + arcs[6] / thetas[6]
+
+        T[5] = max([T[1] + arcs[4], T[2] + arcs[5], T[4] + arcs[8]])
+        ind = np.argmax([T[1] + arcs[4], T[2] + arcs[5], T[4] + arcs[8]])
+
+        if ind == 1:
+            Tderiv[5, :] = Tderiv[1, :]
+            Tderiv[5, 4] = Tderiv[5, 4] + arcs[4] / thetas[4]
+        elif ind == 2:
+            Tderiv[5, :] = Tderiv[2, :]
+            Tderiv[5, 5] = Tderiv[5, 5] + arcs[5] / thetas[5]
+        else:
+            Tderiv[5, :] = Tderiv[4, :]
+            Tderiv[5, 8] = Tderiv[5, 8] + arcs[8] / thetas[8]
+
+        T[6] = T[3] + arcs[7]
+        Tderiv[6, :] = Tderiv[3, :]
+        Tderiv[6, 7] = Tderiv[6, 7] + arcs[7] / thetas[7]
+
+        if T[6] + arcs[11] > T[4] + arcs[9]:
+            T[7] = T[6] + arcs[11]
+            Tderiv[7, :] = Tderiv[6, :]
+            Tderiv[7, 11] = Tderiv[7, 11] + arcs[11] / thetas[11]
+        else:
+            T[7] = T[4] + arcs[9]
+            Tderiv[7, :] = Tderiv[4, :]
+            Tderiv[7, 9] = Tderiv[7, 9] + arcs[9] / thetas[9]
+
+        if T[5] + arcs[10] > T[7] + arcs[12]:
+            T[8] = T[5] + arcs[10]
+            Tderiv[8, :] = Tderiv[5, :]
+            Tderiv[8, 10] = Tderiv[8, 10] + arcs[10] / thetas[10]
+        else:
+            T[8] = T[7] + arcs[12]
+            Tderiv[8, :] = Tderiv[7, :]
+            Tderiv[8, 12] = Tderiv[8, 12] + arcs[12] / thetas[12]
+
+        longest_path = T[8]
+        longest_path_gradient = Tderiv[8, :]
 
         # Compose responses and gradients.
-        responses = {"profit": np.sum(profit), "n_prod_stockout": np.sum(inventory == 0)}
-        gradients = {response_key:
-                     {factor_key: np.nan for factor_key in self.specifications}
-                     for response_key in responses
-                     }
+        responses = {"longest_path_length": longest_path}
+        gradients = {"longest_path_length": {"mean_grad": longest_path_gradient}}
+
         return responses, gradients
 
 
 """
 Summary
 -------
-Maximize the expected profit for the continuous newsvendor problem.
+Minimize the duration of the longest path from a to i plus cost.
 """
 
 
-class DynamNewsMaxProfit(Problem):
+class FixedSANLongestPath(Problem):
     """
     Base class to implement simulation-optimization problems.
 
@@ -235,7 +229,7 @@ class DynamNewsMaxProfit(Problem):
         or a random problem instance
     factors : dict
         changeable factors of the problem
-            initial_solution : tuple
+            initial_solution : list
                 default initial solution from which solvers start
             budget : int > 0
                 max number of replications (fn evals) for a solver to take
@@ -255,7 +249,7 @@ class DynamNewsMaxProfit(Problem):
     --------
     base.Problem
     """
-    def __init__(self, name="DYNAMNEWS-1", fixed_factors=None, model_fixed_factors=None):
+    def __init__(self, name="FIXEDSAN-1", fixed_factors=None, model_fixed_factors=None):
         if fixed_factors is None:
             fixed_factors = {}
         if model_fixed_factors is None:
@@ -263,38 +257,49 @@ class DynamNewsMaxProfit(Problem):
         self.name = name
         self.n_objectives = 1
         self.n_stochastic_constraints = 0
-        self.minmax = (1,)
+        self.minmax = (-1,)
         self.constraint_type = "box"
-        self.variable_type = "discrete"
-        self.gradient_available = True
+        self.variable_type = "continuous"
+        self.gradient_available = False
         self.optimal_value = None
         self.optimal_solution = None
         self.model_default_factors = {}
-        self.model_fixed_factors = {}
-        self.model_decision_factors = {"init_level"}
+        self.model_decision_factors = {"arc_means"}
         self.factors = fixed_factors
         self.specifications = {
             "initial_solution": {
-                "description": "Initial solution from which solvers start.",
+                "description": "Initial solution.",
                 "datatype": tuple,
-                "default": (2, 3)
+                "default": (10,) * 13
             },
             "budget": {
                 "description": "Max # of replications for a solver to take.",
                 "datatype": int,
-                "default": 1000
+                "default": 10000
+            },
+            "arc_costs": {
+                "description": "Cost associated to each arc.",
+                "datatype": tuple,
+                "default": (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
             }
         }
         self.check_factor_list = {
             "initial_solution": self.check_initial_solution,
-            "budget": self.check_budget
+            "budget": self.check_budget,
+            "arc_costs": self.check_arc_costs
         }
         super().__init__(fixed_factors, model_fixed_factors)
-        # Instantiate model with fixed factors and overwritten defaults.
-        self.model = DynamNews(self.model_fixed_factors)
-        self.dim = self.model.factors["num_prod"]
+        # Instantiate model with fixed factors and over-riden defaults.
+        self.model = FixedSAN(self.model_fixed_factors)
+        self.dim = self.model.factors["num_arcs"]
         self.lower_bounds = (0,) * self.dim
         self.upper_bounds = (np.inf,) * self.dim
+
+    def check_arc_costs(self):
+        positive = True
+        for x in list(self.factors["arc_costs"]):
+            positive = positive & x > 0
+        return (len(self.factors["arc_costs"]) != self.model.factors["num_arcs"]) & positive
 
     def vector_to_factor_dict(self, vector):
         """
@@ -311,7 +316,7 @@ class DynamNewsMaxProfit(Problem):
             dictionary with factor keys and associated values
         """
         factor_dict = {
-            "init_level": vector[:]
+            "arc_means": vector[:]
         }
         return factor_dict
 
@@ -330,7 +335,7 @@ class DynamNewsMaxProfit(Problem):
         vector : tuple
             vector of values associated with decision variables
         """
-        vector = tuple(factor_dict["init_level"])
+        vector = tuple(factor_dict["arc_means"])
         return vector
 
     def response_dict_to_objectives(self, response_dict):
@@ -348,7 +353,7 @@ class DynamNewsMaxProfit(Problem):
         objectives : tuple
             vector of objectives
         """
-        objectives = (response_dict["profit"],)
+        objectives = (response_dict["longest_path_length"],)
         return objectives
 
     def response_dict_to_stoch_constraints(self, response_dict):
@@ -369,6 +374,26 @@ class DynamNewsMaxProfit(Problem):
         stoch_constraints = None
         return stoch_constraints
 
+    def deterministic_stochastic_constraints_and_gradients(self, x):
+        """
+        Compute deterministic components of stochastic constraints for a solution `x`.
+
+        Arguments
+        ---------
+        x : tuple
+            vector of decision variables
+
+        Returns
+        -------
+        det_stoch_constraints : tuple
+            vector of deterministic components of stochastic constraints
+        det_stoch_constraints_gradients : tuple
+            vector of gradients of deterministic components of stochastic constraints
+        """
+        det_stoch_constraints = None
+        det_stoch_constraints_gradients = ((0,) * self.dim,)  # tuple of tuples – of sizes self.dim by self.dim, full of zeros
+        return det_stoch_constraints, det_stoch_constraints_gradients
+
     def deterministic_objectives_and_gradients(self, x):
         """
         Compute deterministic components of objectives for a solution `x`.
@@ -385,36 +410,13 @@ class DynamNewsMaxProfit(Problem):
         det_objectives_gradients : tuple
             vector of gradients of deterministic components of objectives
         """
-        det_objectives = (0,)
-        det_objectives_gradients = ((0,),)
+        det_objectives = (np.sum(np.array(self.factors["arc_costs"]) / np.array(x)),)
+        det_objectives_gradients = (-np.array(self.factors["arc_costs"]) / (np.array(x) ** 2))
         return det_objectives, det_objectives_gradients
-
-    def deterministic_stochastic_constraints_and_gradients(self, x):
-        """
-        Compute deterministic components of stochastic constraints
-        for a solution `x`.
-
-        Arguments
-        ---------
-        x : tuple
-            vector of decision variables
-
-        Returns
-        -------
-        det_stoch_constraints : tuple
-            vector of deterministic components of stochastic constraints
-        det_stoch_constraints_gradients : tuple
-            vector of gradients of deterministic components of
-            stochastic constraints
-        """
-        det_stoch_constraints = None
-        det_stoch_constraints_gradients = None
-        return det_stoch_constraints, det_stoch_constraints_gradients
 
     def check_deterministic_constraints(self, x):
         """
-        Check if a solution `x` satisfies the problem's deterministic
-        constraints.
+        Check if a solution `x` satisfies the problem's deterministic constraints.
 
         Arguments
         ---------
@@ -426,7 +428,7 @@ class DynamNewsMaxProfit(Problem):
         satisfies : bool
             indicates if solution `x` satisfies the deterministic constraints.
         """
-        return np.all(x > 0)
+        return np.all(np.array(x) >= 0)
 
     def get_random_solution(self, rand_sol_rng):
         """
@@ -442,5 +444,5 @@ class DynamNewsMaxProfit(Problem):
         x : tuple
             vector of decision variables
         """
-        x = tuple([rand_sol_rng.uniform(0, 10) for _ in range(self.dim)])
+        x = tuple([rand_sol_rng.lognormalvariate(self, lq=0.1, uq=10) for _ in range(self.dim)])
         return x

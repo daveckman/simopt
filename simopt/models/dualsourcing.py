@@ -2,9 +2,10 @@
 Summary
 -------
 Simulate multiple periods of ordering and sales for a dual sourcing inventory problem.
+A detailed description of the model/problem can be found
+`here <https://simopt.readthedocs.io/en/latest/dualsourcing.html>`_.
 """
 import numpy as np
-import scipy.stats as scs
 
 from base import Model, Problem
 
@@ -65,7 +66,9 @@ class DualSourcing(Model):
     --------
     base.Model
     """
-    def __init__(self, fixed_factors={}):
+    def __init__(self, fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
         self.name = "DUALSOURCING"
         self.n_rngs = 1
         self.n_responses = 3
@@ -219,7 +222,7 @@ class DualSourcing(Model):
 
         # Generate demand.
         demand = [round(max(0, demand_rng.normalvariate(mu=self.factors["mu"], sigma=self.factors["st_dev"]))) for _ in range(self.factors["n_days"])]
-        
+
         # Track total expenses.
         total_holding_cost = np.zeros(self.factors["n_days"])
         total_penalty_cost = np.zeros(self.factors["n_days"])
@@ -241,8 +244,8 @@ class DualSourcing(Model):
             orders_exp = np.delete(orders_exp, 0)
             orders_reg = np.delete(orders_reg, 0)
             # Satisfy or backorder demand.
-            #dn = max(0, demand[day]) THIS IS DONE TWICE
-            #inv = inv - dn
+            # dn = max(0, demand[day]) THIS IS DONE TWICE
+            # inv = inv - dn
             inv = inv - demand[day]
             total_penalty_cost[day] = -1 * self.factors["penalty_cost"] * min(0, inv)
             # Charge holding cost.
@@ -325,7 +328,11 @@ class DualSourcingMinCost(Problem):
     --------
     base.Problem
     """
-    def __init__(self, name="DUALSOURCING-1", fixed_factors={}, model_fixed_factors={}):
+    def __init__(self, name="DUALSOURCING-1", fixed_factors=None, model_fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
+        if model_fixed_factors is None:
+            model_fixed_factors = {}
         self.name = name
         self.dim = 2
         self.n_objectives = 1

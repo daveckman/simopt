@@ -2,6 +2,8 @@
 Summary
 -------
 Simulate expected revenue for a hotel.
+A detailed description of the model/problem can be found
+`here <https://simopt.readthedocs.io/en/latest/hotel.html>`_.
 """
 import numpy as np
 
@@ -36,7 +38,9 @@ class Hotel(Model):
     --------
     base.Model
     """
-    def __init__(self, fixed_factors={}):
+    def __init__(self, fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
         self.name = "HOTEL"
         self.n_rngs = 1
         self.n_responses = 1
@@ -297,7 +301,9 @@ class HotelRevenue(Problem):
     --------
     base.Problem
     """
-    def __init__(self, name="HOTEL-1", fixed_factors={}, model_fixed_factors={}):
+    def __init__(self, name="HOTEL-1", fixed_factors=None, model_fixed_factors=None):
+        if fixed_factors is None:
+            fixed_factors = {}
         self.name = name
         self.n_objectives = 1
         self.n_stochastic_constraints = 0

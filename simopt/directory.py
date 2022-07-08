@@ -7,8 +7,11 @@ Provide dictionary directories listing solvers, problems, and models.
 Listing
 -------
 solver_directory : dictionary
+solver_nonabbreviated_directory : dictionary
 problem_directory : dictionary
+problem_nonabbreviated_directory : dictionary
 model_directory : dictionary
+model_unabbreviated_directory : dictionary
 """
 # import solvers
 from solvers.astrodf import ASTRODF
@@ -29,13 +32,20 @@ from models.chessmm import ChessMatchmaking, ChessAvgDifference
 from models.san import SAN, SANLongestPath
 from models.hotel import Hotel, HotelRevenue
 from models.tableallocation import TableAllocation, TableAllocationMaxRev
-from models.paramesti import ParameterEstimation, ParamEstiMinLogLik
+from models.paramesti import ParameterEstimation, ParamEstiMaxLogLik
+from models.fixedsan import FixedSAN, FixedSANLongestPath
+from models.voting import Voting, MinVotingMaxWaitTime
+from models.prodsys import ProdSys, ProdSysMinLeadTime
 # directory dictionaries
 solver_directory = {
     "ASTRODF": ASTRODF,
     "RNDSRCH": RandomSearch,
     "NELDMD": NelderMead,
     "STRONG": STRONG
+}
+solver_nonabbreviated_directory = {
+    "ASTRODF (SDCN)": ASTRODF,
+    "RandomSearch (SSMN)": RandomSearch
 }
 problem_directory = {
     "CNTNEWS-1": CntNVMaxProfit,
@@ -54,7 +64,31 @@ problem_directory = {
     "SAN-1": SANLongestPath,
     "HOTEL-1": HotelRevenue,
     "TABLEALLOCATION-1": TableAllocationMaxRev,
-    "PARAMESTI-1": ParamEstiMinLogLik
+    "PARAMESTI-1": ParamEstiMaxLogLik,
+    "FIXEDSAN-1": FixedSANLongestPath,
+    "VOTING-1": MinVotingMaxWaitTime,
+    "PRODSYS-1": ProdSysMinLeadTime
+}
+problem_nonabbreviated_directory = {
+    "Max Profit for Continuous Newsvendor (SBCG)": CntNVMaxProfit,
+    "Min Mean Sojourn Time for MM1 Queue (SBCG)": MM1MinMeanSojournTime,
+    "Min Total Cost for Facility Sizing (SSCG)": FacilitySizingTotalCost,
+    "Max Service for Facility Sizing (SDCN)": FacilitySizingMaxService,
+    "Max Revenue for Revenue Management Temporal Demand (SDDN)": RMITDMaxRevenue,
+    "Min Total Cost for (s, S) Inventory (SBCN)": SSContMinCost,
+    "Max Revenue for Iron Ore (SBDN)": IronOreMaxRev,
+    "Max Profit for Dynamic Newsvendor (SBDG)": DynamNewsMaxProfit,
+    "Min Cost for Dual Sourcing (SBDN)": DualSourcingMinCost,
+    "Min Total Cost for Discrete Contamination (SSDN)": ContaminationTotalCostDisc,
+    "Min Total Cost for Continuous Contamination (SSCN)": ContaminationTotalCostCont,
+    "Min Avg Difference for Chess Matchmaking (SSCN)": ChessAvgDifference,
+    "Min Mean Longest Path for Stochastic Activity Network (SBCN)": SANLongestPath,
+    "Max Revenue for Hotel Booking (SBDN)": HotelRevenue,
+    "Max Revenue for Restaurant Table Allocation (SDDN)": TableAllocationMaxRev,
+    "Max Log Likelihood for Gamma Parameter Estimation (SBCG)": ParamEstiMaxLogLik,
+    "Min Mean Longest Path for Fixed Stochastic Activity Network (SBCN)": FixedSANLongestPath,
+    "Minimize Maximum Waiting Time for Voting System (SDDN)": MinVotingMaxWaitTime,
+    "Minimize Lead Time for Production System (SSDN)": ProdSysMinLeadTime
 }
 model_directory = {
     "CNTNEWS": CntNV,
@@ -70,5 +104,29 @@ model_directory = {
     "SAN": SAN,
     "HOTEL": Hotel,
     "TABLEALLOCATION": TableAllocation,
-    "PARAMESTI": ParameterEstimation
+    "PARAMESTI": ParameterEstimation,
+    "FIXEDSAN": FixedSAN,
+    "VOTING": Voting,
+    "PRODSYS": ProdSys
+}
+model_unabbreviated_directory = {
+    "Max Profit for Continuous Newsvendor (SBCG)": "CNTNEWS",
+    "Min Mean Sojourn Time for MM1 Queue (SBCG)": "MM1",
+    "Min Total Cost for Facility Sizing (SSCG)": "FACSIZE",
+    "Max Service for Facility Sizing (SDCN)": "FACSIZE",
+    "Max Revenue for Revenue Management Temporal Demand (SDDN)": "RMITD",
+    "Min Total Cost for (s, S) Inventory (SBCN)": "SSCONT",
+    "Max Revenue for Iron Ore (SBDN)": "IRONORE",
+    "Max Profit for Dynamic Newsvendor (SBDG)": "DYNAMNEWS",
+    "Min Cost for Dual Sourcing (SBDN)": "DUALSOURCING",
+    "Min Total Cost for Discrete Contamination (SSDN)": "CONTAM",
+    "Min Total Cost for Continuous Contamination (SSCN)": "CONTAM",
+    "Min Avg Difference for Chess Matchmaking (SSCN)": "CHESS",
+    "Min Mean Longest Path for Stochastic Activity Network (SBCN)": "SAN",
+    "Max Revenue for Hotel Booking (SBDN)": "HOTEL",
+    "Max Revenue for Restaurant Table Allocation (SDDN)": "TABLEALLOCATION",
+    "Max Log Likelihood for Gamma Parameter Estimation (SBCG)": "PARAMESTI",
+    "Min Mean Longest Path for Fixed Stochastic Activity Network (SBCN)": "FIXEDSAN",
+    "Minimize Maximum Waiting Time for Voting System (SDDN)": "VOTING",
+    "Minimize Lead Time for Production System (SSDN)": "PRODSYS"
 }
