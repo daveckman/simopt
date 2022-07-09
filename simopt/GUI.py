@@ -775,6 +775,9 @@ class Experiment_Window(tk.Tk):
         self.experiment_master_list.pop(integer-1)
         self.experiment_object_list.pop(integer-1)
         self.widget_list.pop(integer-1)
+
+        self.check_box_list[integer-1].grid_remove()
+
         self.check_box_list.pop(integer -1)
         self.check_box_list_var.pop(integer -1)
 
@@ -1659,6 +1662,7 @@ class Experiment_Window(tk.Tk):
         print("youve returned")
     
     def make_meta_experiment_func(self):
+        self.list_checked_experiments = []
         message2 = "There are experiments missing, would you like to add them?"
         response = tk.messagebox.askyesno(title = "Make meta Experiemnts",message = message2)
 
