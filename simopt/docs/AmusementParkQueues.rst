@@ -49,65 +49,61 @@ with the shape parameter k = 2 and rate =9.
 
 Model Factors:
 --------------
-* parkCapacity: The total number of tourists waiting for attractions that can
-be maintained through park facilities, distributed across the attractions
+* park_capacity: The total number of tourists waiting for attractions that can
+be maintained through park facilities, distributed across the attractions.
 
     * Default: 350
 
-* timeOpen: The number of minutes per day the park is open
+* number_attractions: The number of attractions in the park.
+
+    * Default: 7
+
+* time_open: The number of minutes per day the park is open.
 
     * Default: 480
 
-* departProbability: The probability that a tourist will depart the park
-after visiting an attraction
+* erlang_shape: The shape parameter of the Erlang distribution for attraction
+duration.
 
-    * Default: 0.2
+    Default: 2
 
-* queueCapacity1: The capacity of the queue for the first attraction based
+* erlang_rate: The rate parameter of the Erlang distribution for attraction
+    duration.
+
+        Default: 9
+
+* depart_probabilities: The probability that a tourist will depart the park
+after visiting an attraction.
+
+    * Default: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+
+* queue_capacities: The capacity of the queues for the attractions based
 on the portion of facilities allocated
 
-    * Default: 50
+    * Default: [50, 50, 50, 50, 50, 50, 50]
 
-* queueCapacity2: The capacity of the queue for the second attraction based
-on the portion of facilities allocated
+* arrival_gammas: The gamma values for the poisson distributions dictating the
+rates at which tourists entering the park arrive at each attraction
 
-    * Default: 50
+    * Default: [1, 1, 1, 1, 1, 1, 1]
 
-* queueCapacity3: The capacity of the queue for the third attraction based
-on the portion of facilities allocated
+* transition_probabilities: The transition matrix that describes the probability
+of a tourist visiting each attraction after their current attraction
 
-    * Default: 50
-
-* queueCapacity4: The capacity of the queue for the fourth attraction based
-on the portion of facilities allocated
-
-    * Default: 50
-
-* queueCapacity5: The capacity of the queue for the fifth attraction based
-on the portion of facilities allocated
-
-    * Default: 50
-
-* queueCapacity6: The capacity of the queue for the sixth attraction based
-on the portion of facilities allocated
-
-    * Default: 50
-
-* queueCapacity7: The capacity of the queue for the seventh attraction based
-on the portion of facilities allocated
-
-    * Default: 50
-
-number of attractions!!
-//any parameter or setting of the model that someone could want to change//
-//could be numerical or categorical//
+    * Default: [[0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0],
+    [0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0],
+    [0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0],
+    [0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0],
+    [0.1, 0.1, 0.1, 0.1, 0, 0.1, 0.3],
+    [0.1, 0.1, 0.1, 0.1, 0.1, 0, 0.3],
+    [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2]]
 
 Responses:
 ---------
-* totalDepartedTourists: The total number of tourists to leave the park due
+* total_departed: The total number of tourists to leave the park due
 to full queues
 
-* percentDepartedTourists: The percentage of tourists to leave the park due
+* percent_departed: The percentage of tourists to leave the park due
 to full queues
 
 
@@ -125,32 +121,21 @@ Optimization Problem: Minimize Total Departed Tourists (PARK-QUEUES-1)
 
 Decision Variables:
 -------------------
-* queueCapacity1
-* queueCapacity2
-* queueCapacity3
-* queueCapacity4
-* queueCapacity5
-* queueCapacity6
-* queueCapacity7
+* queue_capacities
+
 
 
 Objectives:
 -----------
-Minimize totalDepartedTourists
+Minimize total_departed
 
 Constraints:
 ------------
-* parkCapacity = 350
+* park_capacity = 350
 
 * i=17queueCapacityi=parkCapacity
 
-* queueCapacity1 >= 0
-* queueCapacity2 >= 0
-* queueCapacity3 >= 0
-* queueCapacity4 >= 0
-* queueCapacity5 >= 0
-* queueCapacity6 >= 0
-* queueCapacity7 >= 0
+* queue_capacities >= 0
 
 Problem Factors:
 ----------------
